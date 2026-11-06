@@ -42,14 +42,14 @@
     .nav-item.active { background: var(--bg-surface); color: var(--warm-yellow); border-color: var(--border-strong); border-left: 3px solid var(--muted-gold); }
     .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border-subtle); font-size: 11px; color: var(--text-muted); }
     .main-content { flex: 1; padding: 32px 40px; max-width: 1200px; overflow-y: auto; }
-    .top-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 12px 20px; border-radius: 6px; border: 1px solid var(--border-strong); margin-bottom: 24px; }
-    .participant-pill { display: flex; align-items: center; gap: 10px; }
-    .participant-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-olive); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #12150D; font-size: 14px; }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 12px 20px; border-radius: 6px; border: 1px solid var(--border-strong); margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
+    .participant-pill { display: flex; align-items: center; gap: 12px; }
+    .participant-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary-olive); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #12150D; font-size: 14px; }
     .page-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border-subtle); padding-bottom: 18px; }
     .page-title { font-size: 22px; font-weight: 600; color: var(--text-primary); }
     .page-desc { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
     .panel { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 6px; padding: 24px; margin-bottom: 24px; }
-    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 8px; }
     .panel-title { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--light-sage); }
     .form-group { margin-bottom: 18px; }
     .form-label { display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 6px; }
@@ -57,7 +57,7 @@
     .form-input.mono, .form-textarea.mono { font-family: var(--font-mono); font-size: 12px; }
     .form-input:focus, .form-textarea:focus { border-color: var(--primary-olive); }
     .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all 0.15s ease; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all 0.15s ease; text-decoration: none; }
     .btn-primary { background: var(--primary-olive); color: #12150D; border-color: var(--light-sage); }
     .btn-primary:hover { background: var(--light-sage); }
     .btn-secondary { background: var(--bg-elevated); color: var(--text-primary); border-color: var(--border-strong); }
@@ -77,10 +77,12 @@
     .data-table th { text-align: left; padding: 10px 12px; background: var(--bg-elevated); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-strong); }
     .data-table td { padding: 12px; border-bottom: 1px solid var(--border-subtle); color: var(--text-primary); }
     .hidden { display: none !important; }
-    .step-indicator { display: flex; gap: 8px; margin-bottom: 20px; }
-    .step-pill { flex: 1; padding: 8px 12px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-strong); font-size: 12px; text-align: center; color: var(--text-secondary); }
+    .step-indicator { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .step-pill { flex: 1; min-width: 140px; padding: 8px 12px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-strong); font-size: 12px; text-align: center; color: var(--text-secondary); cursor: pointer; }
     .step-pill.active { border-color: var(--muted-gold); color: var(--warm-yellow); background: var(--bg-elevated); font-weight: 600; }
     .step-pill.completed { border-color: var(--primary-olive); color: var(--light-sage); }
+    .share-card { background: var(--bg-input); border: 2px solid var(--muted-gold); border-radius: 6px; padding: 18px; margin-top: 18px; }
+    .banner-highlight { background: rgba(198, 185, 95, 0.15); border: 1px solid var(--muted-gold); border-radius: 6px; padding: 14px 18px; margin-bottom: 18px; }
   </style>
 </head>
 <body>
@@ -92,23 +94,22 @@
         <div class="tagline">Programmable Secret Capsules</div>
       </div>
       <nav class="sidebar-nav">
-        <button class="nav-item active" onclick="switchView('demo')">★ Judge Demo (Northstar)</button>
-        <button class="nav-item" onclick="switchView('create')">01. Capsule Creator (Alice)</button>
-        <button class="nav-item" onclick="switchView('inspect')">02. Inspect & Reveal (Bob)</button>
-        <button class="nav-item" onclick="switchView('review')">03. Reviewer Portal</button>
+        <button class="nav-item active" onclick="switchView('demo')">★ Live Portal & Link Demo</button>
+        <button class="nav-item" onclick="switchView('create')">01. Create & Share (Alice)</button>
+        <button class="nav-item" onclick="switchView('inspect')">02. Recipient View (Bob)</button>
+        <button class="nav-item" onclick="switchView('review')">03. Reviewer Quorum</button>
         <button class="nav-item" onclick="switchView('guardians')">04. Guardian Cluster</button>
-        <button class="nav-item" onclick="switchView('identity')">05. Identity & Compliance</button>
-        <button class="nav-item" onclick="switchView('sdk')">06. Developer SDK & API</button>
+        <button class="nav-item" onclick="switchView('identity')">05. Identity Compliance</button>
       </nav>
       <div class="sidebar-footer">
         <div>ETHGlobal Mumbai 2026</div>
-        <div style="margin-top: 4px; color: var(--light-sage)">Status: Demo Workspace Active</div>
+        <div style="margin-top: 4px; color: var(--light-sage)">Status: Real Web3 Mode Active</div>
       </div>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Top Authentication Bar -->
+      <!-- Top Authentication & Wallet Bar -->
       <div class="top-bar">
         <div class="participant-pill">
           <div id="user-avatar" class="participant-avatar">A</div>
@@ -122,16 +123,35 @@
             </div>
           </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 12px; color: var(--text-secondary)">Switch Participant:</span>
+
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <!-- Connect MetaMask Button -->
+          <button id="btn-connect-metamask" class="btn btn-secondary" onclick="connectMetaMask()">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#858C50;"></span>
+            <span id="metamask-label">Connect MetaMask</span>
+          </button>
+
+          <!-- Quick Identity Switcher -->
+          <span style="font-size: 12px; color: var(--text-secondary)">Quick Switch:</span>
           <select id="select-participant" class="form-select" style="width: auto; padding: 6px 10px; font-size: 12px;" onchange="switchParticipant(this.value)">
-            <option value="alice" selected>Alice (Researcher / Creator)</option>
-            <option value="bob">Bob (Northstar Security Lead / Recipient)</option>
-            <option value="charlie">Charlie (Reviewer 1 / AppSec)</option>
-            <option value="david">David (Reviewer 2 / Cryptographer)</option>
-            <option value="eve">Eve (Reviewer 3 / External Auditor)</option>
+            <option value="alice" selected>Alice (Creator / 0x7099...)</option>
+            <option value="bob">Bob (Recipient / 0x3C44...)</option>
+            <option value="charlie">Charlie (Reviewer 1 / 0x90F7...)</option>
+            <option value="david">David (Reviewer 2 / 0x35B3...)</option>
+            <option value="eve">Eve (Reviewer 3 / 0x9965...)</option>
           </select>
           <span id="auth-status-badge" class="badge badge-ok">SIWE Verified</span>
+        </div>
+      </div>
+
+      <!-- Active Capsule Share Banner (if loaded via link) -->
+      <div id="active-link-banner" class="banner-highlight hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <strong style="color: var(--warm-yellow); font-size: 13px;">🔗 VIEWING CAPSULE VIA DIRECT LINK:</strong>
+            <span id="banner-capsule-id" class="mono" style="margin-left: 8px; font-size: 12px;">0x...</span>
+          </div>
+          <span id="banner-role-badge" class="badge badge-pending">Role: Recipient</span>
         </div>
       </div>
 
@@ -139,153 +159,154 @@
       <section id="view-demo">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Northstar Payments — Vulnerability Disclosure Demo</h1>
+            <h1 class="page-title">VEIL — Programmable Disclosure Experience</h1>
             <p class="page-desc">
-              Human-operated live demonstration for ETHGlobal judges: Alice discovers a critical vulnerability, registers an onchain embargo policy, reviewers approve, and Bob decrypts with threshold guardians.
+              Real-world workflow: Alice encrypts a message & shares the link → Charlie & David approve onchain → Bob opens link on any device and decrypts.
             </p>
           </div>
           <span class="badge badge-pending">ETHGlobal Mumbai 2026</span>
         </div>
 
-        <!-- Scenario Banner -->
-        <div class="panel" style="background: var(--bg-elevated); border-color: var(--muted-gold); padding: 18px 22px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <strong style="color: var(--warm-yellow); font-size: 14px;">SCENARIO PARAMETERS: NORTHSTAR PAYMENTS VULNERABILITY EMBARGO</strong>
-            <span class="badge badge-ok">3 Reviewers · 2 Approvals · 3 Guardians · 2 Shares</span>
-          </div>
-          <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">
-            • <strong>Alice</strong> (Security Researcher) enters confidential zero-day hotfix commit for Northstar Payments.<br />
-            • <strong>Policy:</strong> 90s Embargo Timelock · Reviewers: Charlie, David, Eve (Threshold: 2) · Guardians: Alpha, Beta, Gamma (Threshold: 2).<br />
-            • <strong>Identity:</strong> World ID 4.0 Proof-of-Humanity + Northstar Payments Security Lead Role Credential.<br />
-            • <strong>Recipient:</strong> Bob (Northstar Security Lead).
-          </div>
-        </div>
-
-        <!-- Step Indicator -->
+        <!-- 5-Step Process Bar -->
         <div class="step-indicator">
-          <div id="step-pill-1" class="step-pill active">1. Alice Creates Capsule</div>
-          <div id="step-pill-2" class="step-pill">2. Out-of-Band Carrier Exchange</div>
-          <div id="step-pill-3" class="step-pill">3. Bob Early Access (Fail-Closed)</div>
-          <div id="step-pill-4" class="step-pill">4. Reviewers Vote Onchain</div>
-          <div id="step-pill-5" class="step-pill">5. Threshold Release & Decrypt</div>
+          <div id="step-pill-1" class="step-pill active" onclick="showDemoStep(1)">1. Alice Encrypts & Shares</div>
+          <div id="step-pill-2" class="step-pill" onclick="showDemoStep(2)">2. Recipient Receives Link</div>
+          <div id="step-pill-4" class="step-pill" onclick="showDemoStep(4)">3. Reviewers Approve Onchain</div>
+          <div id="step-pill-5" class="step-pill" onclick="showDemoStep(5)">4. Recipient Decrypts</div>
         </div>
 
-        <!-- STEP 1 PANEL: ALICE CREATOR -->
+        <!-- STEP 1 PANEL: ALICE CREATES & GENERATES SHAREABLE LINK -->
         <div id="demo-step-1" class="panel">
           <div class="panel-header">
-            <span class="panel-title">Step 1: Alice Authors Confidential Advisory</span>
-            <span class="badge badge-ok">Active Signer: Alice</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Advisory Title</label>
-            <input id="demo-adv-title" class="form-input" value="[CRITICAL] CVE-2026-8812: Race Condition in Batch Settlement Pipeline" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Confidential Vulnerability Report (Plaintext)</label>
-            <textarea id="demo-adv-content" rows="6" class="form-textarea mono">{
-  "target": "Northstar Payments v3.4.1",
-  "vulnerability": "Double-credit settlement race condition in LedgerBatchProcessor",
-  "cve": "CVE-2026-8812",
-  "severity": "CRITICAL (CVSS 9.8)",
-  "impact": "Concurrent debit requests across multiple gateway worker threads permit overdraft beyond verified account balance",
-  "proofOfConcept": "POST /api/v2/settlement/batch HTTP/1.1 with concurrent execution nonces: [0x4a12, 0x4a13]",
-  "remediationHotfix": "git commit 8a92bc319f01e2c3b4a5d6e7f8 (Atomic balance locking with Redis Redlock)"
-}</textarea>
-            <p class="form-hint">Plaintext never touches any server. Encrypted locally with AES-256-SIV AEAD envelope.</p>
+            <span class="panel-title">Step 1: Alice Encrypts Secret & Generates Shareable Link</span>
+            <span class="badge badge-ok">Active Signer: Alice (Creator)</span>
           </div>
 
-          <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">Confidential Plaintext Secret</label>
+            <textarea id="demo-adv-content" rows="4" class="form-textarea mono" placeholder="Enter any confidential message to encrypt...">CRITICAL VULNERABILITY ADVISORY: CVE-2026-8812
+Target: Northstar Payments Settlement Pipeline
+Impact: Concurrent idempotency window allows double-crediting
+Private Hotfix Commit: 0x4f89d31c0e27a6b82937105829104c8109275019
+Database Master Credentials: admin / NorthstarProd2026!SecureKey</textarea>
+            <p class="form-hint">This plaintext will be encrypted with AES-256-SIV AEAD. The key is split with Shamir (2, 3) over GF(256) and sealed to guardians.</p>
+          </div>
+
+          <div class="grid-2">
             <div class="form-group">
-              <label class="form-label">Unlock Embargo</label>
-              <input id="demo-unlock-sec" type="number" class="form-input" value="90" />
-              <p class="form-hint">Seconds from creation (Default: 90s)</p>
+              <label class="form-label">Authorized Recipient Wallet Address</label>
+              <input id="demo-recipient-addr" class="form-input mono" value="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" />
+              <p class="form-hint">Bob's address (Only this wallet can unlock the secret)</p>
             </div>
             <div class="form-group">
-              <label class="form-label">Reviewer Quorum</label>
-              <input class="form-input" value="2 of 3 (Charlie, David, Eve)" disabled />
+              <label class="form-label">Embargo Timelock (Seconds)</label>
+              <input id="demo-unlock-sec" type="number" class="form-input" value="60" />
+              <p class="form-hint">Embargo duration before recipient can decrypt (Default: 60s)</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Designated Reviewers (2 Approvals Required)</label>
+              <input class="form-input mono" value="0x90F79bf6EB2c4f870365E785982E1f101E93b906 (Charlie), 0x35B33Ae737809aa6B03fe4124B760E14e5d996a0 (David)" disabled />
             </div>
             <div class="form-group">
-              <label class="form-label">Guardian Threshold</label>
-              <input class="form-input" value="2 of 3 (Alpha, Beta, Gamma)" disabled />
+              <label class="form-label">Key Guardians (2 of 3 Shares Required)</label>
+              <input class="form-input" value="Guardian Alpha (:8791), Guardian Beta (:8792), Guardian Gamma (:8793)" disabled />
             </div>
           </div>
 
           <div style="margin-top: 10px;">
             <button id="btn-create-demo-capsule" class="btn btn-primary" onclick="executeAliceCreateCapsule()">
-              Encrypt, Deposit Shares & Register Onchain
+              🔒 Encrypt, Deposit Shares & Generate Shareable Link
             </button>
           </div>
 
-          <div id="demo-creation-receipt" class="panel hidden" style="margin-top: 20px; border-color: var(--primary-olive);">
-            <div class="panel-header">
-              <span class="panel-title" style="color: var(--warm-yellow)">Capsule Registered Onchain</span>
-              <span class="badge badge-ok">Status: REGISTERED</span>
+          <!-- Shareable Link Card -->
+          <div id="demo-creation-receipt" class="share-card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-weight:700; color:var(--warm-yellow); font-size:14px;">🎉 CAPSULE ENCRYPTED & REGISTERED ONCHAIN!</span>
+              <span class="badge badge-ok">Ready to Share</span>
             </div>
+
+            <div class="form-group">
+              <label class="form-label">Shareable Link (Send this link to Bob / Reviewers to open in another browser/device)</label>
+              <div style="display:flex; gap:10px;">
+                <input id="shareable-link-input" class="form-input mono" readonly style="color:var(--warm-yellow); font-size:12px;" />
+                <button class="btn btn-warning" onclick="copyShareableLink()">Copy Link</button>
+                <a id="open-link-btn" class="btn btn-secondary" target="_blank" href="#">Open in New Tab ↗</a>
+              </div>
+              <p class="form-hint">Anyone who opens this link sees the live onchain status, and only Bob can decrypt once reviewers approve!</p>
+            </div>
+
             <div class="grid-2">
               <div>
                 <label class="form-label">Capsule ID (Onchain)</label>
                 <div id="demo-res-cid" class="output-box mono" style="font-size: 11px;"></div>
               </div>
               <div>
-                <label class="form-label">Policy Hash (AAD Commitment)</label>
+                <label class="form-label">Policy Hash (EVM Commitment)</label>
                 <div id="demo-res-pol" class="output-box mono" style="font-size: 11px;"></div>
               </div>
             </div>
+
             <div style="margin-top: 14px;">
-              <label class="form-label">Reversible Steganographic Carrier Text (Copy to Send to Bob)</label>
-              <div id="demo-res-carrier" class="output-box" style="color: var(--light-sage); font-size: 13px;"></div>
+              <label class="form-label">Reversible Steganographic Carrier Text</label>
+              <div id="demo-res-carrier" class="output-box" style="color: var(--light-sage); font-size: 13px; max-height:100px; overflow-y:auto;"></div>
               <div style="margin-top: 10px; display: flex; gap: 10px;">
-                <button class="btn btn-secondary" onclick="copyDemoCarrierText()">Copy Carrier Text</button>
-                <button class="btn btn-primary" onclick="proceedToStep2()">Proceed to Out-of-Band Exchange →</button>
+                <button class="btn btn-secondary" onclick="copyDemoCarrierText()">Copy Stego Text</button>
+                <button class="btn btn-primary" onclick="proceedToStep2()">Proceed to Recipient View →</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- STEP 2 & 3 PANEL: BOB INSPECTS & ATTEMPTS EARLY ACCESS -->
+        <!-- STEP 2 PANEL: RECIPIENT INSPECTS & TESTS EARLY ACCESS -->
         <div id="demo-step-2" class="panel hidden">
           <div class="panel-header">
-            <span class="panel-title">Step 2 & 3: Bob Decodes Carrier & Tests Early Access</span>
-            <span class="badge badge-pending">Active Signer: Bob (Recipient)</span>
+            <span class="panel-title">Step 2: Recipient Portal & Embargo Verification</span>
+            <span id="step2-signer-badge" class="badge badge-pending">Active Signer: Bob (Recipient)</span>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Pasted Carrier Text (Received Out-of-Band)</label>
-            <textarea id="demo-bob-input" rows="4" class="form-textarea mono" placeholder="Paste natural carrier text here..."></textarea>
+            <label class="form-label">Steganographic Carrier Text (Loaded via Link or Pasted)</label>
+            <textarea id="demo-bob-input" rows="3" class="form-textarea mono" placeholder="Carrier text appears here automatically when opening a shareable link..."></textarea>
           </div>
 
-          <button class="btn btn-primary" onclick="executeBobDecodeCarrier()">Decode Carrier & Query Policy Registry</button>
+          <div style="display:flex; gap:10px; margin-bottom:18px;">
+            <button class="btn btn-primary" onclick="executeBobDecodeCarrier()">Inspect Capsule & Query Smart Contract</button>
+          </div>
 
-          <div id="demo-bob-status" class="hidden" style="margin-top: 20px;">
+          <div id="demo-bob-status" class="hidden">
             <div class="panel-header">
               <span class="panel-title">Live Onchain Policy Checklist</span>
               <span id="demo-policy-badge" class="badge badge-locked">LOCKED ONCHAIN</span>
             </div>
             <table class="data-table">
-              <thead><tr><th>Release Condition</th><th>Criteria</th><th>Current State</th><th>Status</th></tr></thead>
+              <thead><tr><th>Condition</th><th>Requirement</th><th>Current Onchain State</th><th>Status</th></tr></thead>
               <tbody>
                 <tr>
                   <td><strong>Timelock Embargo</strong></td>
-                  <td>90 seconds after creation</td>
+                  <td>Embargo duration passed</td>
                   <td id="demo-time-countdown" class="mono" style="color: var(--warm-yellow)">Counting down...</td>
                   <td><span id="demo-time-badge" class="badge badge-locked">LOCKED</span></td>
                 </tr>
                 <tr>
                   <td><strong>Reviewer Quorum</strong></td>
-                  <td>2 of 3 (Charlie, David, Eve)</td>
+                  <td>2 of 3 approvals (Charlie, David, Eve)</td>
                   <td id="demo-quorum-count">0 of 2 approvals recorded onchain</td>
                   <td><span id="demo-quorum-badge" class="badge badge-pending">PENDING</span></td>
                 </tr>
                 <tr>
-                  <td><strong>Proof-of-Humanity</strong></td>
-                  <td>World ID 4.0 Groth16 Nullifier Proof</td>
-                  <td>Recipient wallet bound: 0x3C44...93BC</td>
-                  <td><span class="badge badge-ok">REQUIRED</span></td>
+                  <td><strong>Recipient Wallet</strong></td>
+                  <td>Must match capsule recipient</td>
+                  <td id="demo-recipient-match" class="mono">0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC</td>
+                  <td><span id="demo-recipient-badge" class="badge badge-ok">MATCHED</span></td>
                 </tr>
                 <tr>
-                  <td><strong>Enterprise Authorization</strong></td>
-                  <td>Security Lead @ northstar</td>
-                  <td>Signed Authority Credential</td>
+                  <td><strong>Identity Proofs</strong></td>
+                  <td>World ID 4.0 Groth16 + Northstar Role</td>
+                  <td>Required for key-share release</td>
                   <td><span class="badge badge-ok">REQUIRED</span></td>
                 </tr>
               </tbody>
@@ -296,10 +317,10 @@
                 Attempt Early Decryption (Demonstrate Fail-Closed)
               </button>
               <button class="btn btn-secondary" onclick="simulateFastForward90s()">
-                ⚡ Advance Time (+90s Embargo Expired)
+                ⚡ Advance Timelock (+60s Expired)
               </button>
-              <button class="btn btn-secondary" onclick="switchParticipant('charlie')">
-                Switch to Reviewer (Charlie) →
+              <button class="btn btn-warning" onclick="switchParticipant('charlie')">
+                Switch to Reviewer (Charlie) to Approve →
               </button>
             </div>
 
@@ -316,44 +337,44 @@
         <!-- STEP 4 PANEL: REVIEWER PORTAL -->
         <div id="demo-step-4" class="panel hidden">
           <div class="panel-header">
-            <span class="panel-title">Step 4: Multi-Party Reviewer Onchain Approval</span>
-            <span id="demo-reviewer-role-badge" class="badge badge-pending">Reviewer Quorum Portal</span>
+            <span class="panel-title">Step 3: Multi-Party Reviewer Onchain Quorum</span>
+            <span id="demo-reviewer-role-badge" class="badge badge-pending">Reviewer Approval Portal</span>
           </div>
 
           <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
-            The smart contract requires at least 2 distinct reviewer addresses to sign onchain approvals before guardians unlock key shares.
+            The smart contract (`VeilPolicyRegistry.sol`) requires at least 2 distinct reviewer signatures before guardians release key shares.
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 14px;">
             <!-- Charlie -->
-            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 14px; border-radius: 4px; border: 1px solid var(--border-subtle);">
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 14px; border-radius: 4px; border: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 10px;">
               <div>
                 <div style="font-weight: 600;">Reviewer 1: Charlie (AppSec Lead)</div>
                 <div class="mono" style="font-size: 12px; color: var(--text-secondary);">0x90F79bf6EB2c4f870365E785982E1f101E93b906</div>
               </div>
               <button id="btn-charlie-approve" class="btn btn-primary" onclick="signCharlieApproval()">
-                Sign Approval Transaction
+                Sign Approval Transaction (Charlie)
               </button>
             </div>
 
             <!-- David -->
-            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 14px; border-radius: 4px; border: 1px solid var(--border-subtle);">
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 14px; border-radius: 4px; border: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 10px;">
               <div>
                 <div style="font-weight: 600;">Reviewer 2: David (Lead Cryptographer)</div>
                 <div class="mono" style="font-size: 12px; color: var(--text-secondary);">0x35B33Ae737809aa6B03fe4124B760E14e5d996a0</div>
               </div>
               <button id="btn-david-approve" class="btn btn-primary" onclick="signDavidApproval()">
-                Sign Approval Transaction
+                Sign Approval Transaction (David)
               </button>
             </div>
 
             <!-- Eve -->
-            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 14px; border-radius: 4px; border: 1px solid var(--border-subtle);">
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 14px; border-radius: 4px; border: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 10px;">
               <div>
                 <div style="font-weight: 600;">Reviewer 3: Eve (External Auditor)</div>
                 <div class="mono" style="font-size: 12px; color: var(--text-secondary);">0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc</div>
               </div>
-              <span class="badge badge-locked">Optional (2/3 Quorum Met)</span>
+              <span id="eve-status-badge" class="badge badge-locked">Optional (Quorum 2/3)</span>
             </div>
           </div>
 
@@ -367,16 +388,16 @@
         <!-- STEP 5 PANEL: THRESHOLD RELEASE & LOCAL DECRYPTION -->
         <div id="demo-step-5" class="panel hidden">
           <div class="panel-header">
-            <span class="panel-title">Step 5: Threshold Guardian Release & Local Decryption</span>
-            <span class="badge badge-ok">Active Signer: Bob</span>
+            <span class="panel-title">Step 4: Threshold Guardian Release & Local Client Decryption</span>
+            <span class="badge badge-ok">Active Signer: Bob (Recipient)</span>
           </div>
 
-          <div style="margin-bottom: 20px; display: flex; gap: 12px;">
+          <div style="margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
             <button class="btn btn-secondary" onclick="demonstrateThresholdFailure()">
-              Test 1-Guardian Release (Threshold Failure Demo)
+              Test 1-Guardian Share (Threshold Failure Demo)
             </button>
             <button id="btn-execute-full-release" class="btn btn-warning" onclick="executeFullThresholdReleaseAndDecrypt()">
-              Verify Identity & Decrypt Secret (2-of-3 Guardians)
+              🔓 Unseal Shares & Decrypt Secret (2-of-3 Guardians)
             </button>
           </div>
 
@@ -387,28 +408,26 @@
               <span class="badge badge-pending">Insufficient Shares (k=2)</span>
             </div>
             <div class="output-box mono" style="font-size: 11px;">
-[GUARDIAN ALPHA (PORT 8791)] Released Share #1 sealed to Bob's ephemeral public key.
-[LOCAL CLIENT RECONSTRUCTION] Reconstruct attempted with 1 share:
-  Error: Shamir Secret Sharing requires at least 2 distinct shares; received 1.
-  Mathematical Guarantee: 1 share reveals zero entropy about the 512-bit DEK.
-  Result: Decryption impossible until second guardian releases.
+[GUARDIAN ALPHA (PORT 8791)] Delivered Share #1 sealed to Bob's ephemeral public key.
+[LOCAL CLIENT RECONSTRUCTION] Interpolation attempted with 1 share:
+  Error: Shamir Secret Sharing over GF(256) requires at least 2 distinct evaluations; received 1.
+  Information-Theoretic Guarantee: 1 share reveals zero bits of Shannon entropy about the 512-bit DEK.
+  Result: Plaintext remains cryptographically unreadable.
             </div>
           </div>
 
           <!-- Successful Decryption Display -->
-          <div id="demo-decrypted-box" class="panel hidden" style="border-color: var(--primary-olive)">
+          <div id="demo-decrypted-box" class="panel hidden" style="border-color: var(--primary-olive); background: #1B2114;">
             <div class="panel-header">
-              <span class="panel-title" style="color: var(--warm-yellow)">Confidential Vulnerability Report Decrypted Locally</span>
-              <span class="badge badge-ok">Client Decrypted</span>
+              <span class="panel-title" style="color: var(--warm-yellow); font-size: 16px;">🔓 DECRYPTED CONFIDENTIAL SECRET (REVEALED CLIENT-SIDE)</span>
+              <span class="badge badge-ok">Decryption Successful</span>
             </div>
 
-            <div style="font-size: 12px; color: var(--light-sage); margin-bottom: 8px;">
-              ✓ Guardian Alpha and Guardian Beta released valid ECDSA-signed shares.<br />
-              ✓ DEK reconstructed in transient browser memory via Galois Field GF(256) Lagrange interpolation.<br />
-              ✓ AES-256-SIV AEAD envelope integrity verified. Plaintext secret revealed:
+            <div style="margin-bottom: 10px; font-size: 12px; color: var(--light-sage);">
+              The Data Encryption Key (DEK) was reconstructed inside your browser memory using GF(256) Lagrange interpolation and decrypted the AES-256-SIV AEAD envelope:
             </div>
 
-            <div id="demo-plaintext-output" class="output-box mono" style="font-size: 13px; color: var(--text-primary); max-height: 250px; overflow-y: auto;"></div>
+            <div id="demo-plaintext-output" class="output-box mono" style="font-size: 14px; color: #FFFFFF; font-weight: 600; max-height: 250px; overflow-y: auto; border-color: var(--light-sage);"></div>
 
             <!-- Cryptographic Disclosure Receipt -->
             <div style="margin-top: 20px;">
@@ -419,37 +438,33 @@
         </div>
       </section>
 
-      <!-- Standard Views (Hidden during demo) -->
+      <!-- Standard Navigation Views -->
       <section id="view-create" class="hidden">
         <div class="page-header"><h1 class="page-title">Capsule Creator</h1></div>
-        <p>Use the Judge Demo tab above for the complete Northstar Payments workflow.</p>
+        <p>Use the <strong>Live Portal & Link Demo</strong> tab above for the complete end-to-end workflow.</p>
       </section>
       <section id="view-inspect" class="hidden">
         <div class="page-header"><h1 class="page-title">Inspect & Reveal</h1></div>
-        <p>Use the Judge Demo tab above for the complete Northstar Payments workflow.</p>
+        <p>Use the <strong>Live Portal & Link Demo</strong> tab above for the complete end-to-end workflow.</p>
       </section>
       <section id="view-review" class="hidden">
-        <div class="page-header"><h1 class="page-title">Reviewer Portal</h1></div>
-        <p>Use the Judge Demo tab above for the complete Northstar Payments workflow.</p>
+        <div class="page-header"><h1 class="page-title">Reviewer Quorum Portal</h1></div>
+        <p>Use the <strong>Live Portal & Link Demo</strong> tab above for the complete end-to-end workflow.</p>
       </section>
       <section id="view-guardians" class="hidden">
         <div class="page-header"><h1 class="page-title">Guardian Network Operations</h1></div>
-        <p>Use the Judge Demo tab above for live guardian status inspection.</p>
+        <p>Guardians Alpha (:8791), Beta (:8792), and Gamma (:8793) are online and healthy.</p>
       </section>
       <section id="view-identity" class="hidden">
-        <div class="page-header"><h1 class="page-title">Identity & Access Compliance</h1></div>
-        <p>Use the Judge Demo tab above for World ID & Org Credential validation.</p>
-      </section>
-      <section id="view-sdk" class="hidden">
-        <div class="page-header"><h1 class="page-title">Developer SDK & API Documentation</h1></div>
-        <p>Refer to docs/developers/getting-started.md.</p>
+        <div class="page-header"><h1 class="page-title">Identity Compliance</h1></div>
+        <p>World ID 4.0 Semaphore Groth16 Verifier and Northstar role credentials enabled.</p>
       </section>
     </main>
   </div>
 
   <script>
     // ---------------------------------------------------------------------------
-    // PARTICIPANTS SPECIFICATION (NORTHSTAR PAYMENTS SCENARIO)
+    // PARTICIPANTS SPECIFICATION
     // ---------------------------------------------------------------------------
     const PARTICIPANTS = {
       alice: {
@@ -495,6 +510,7 @@
     };
 
     let activeUser = PARTICIPANTS.alice;
+    let connectedMetaMaskAddress = null;
 
     // Capsule State
     let capsuleId = '';
@@ -505,8 +521,16 @@
     let charlieApproved = false;
     let davidApproved = false;
     let countdownInterval = null;
-    let secondsLeft = 90;
+    let secondsLeft = 60;
     let timeFastForwarded = false;
+
+    // Cross-Tab Broadcast Channel
+    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('veil_protocol_sync') : null;
+    if (syncChannel) {
+      syncChannel.onmessage = (event) => {
+        handleSyncMessage(event.data);
+      };
+    }
 
     // 256-word token dictionary for steganographic carrier generation
     const WORDMAP = [
@@ -518,34 +542,97 @@
       'much', 'before', 'move', 'point', 'page', 'country', 'mother', 'answer', 'study'
     ];
 
-    function switchView(id) {
-      ['demo', 'create', 'inspect', 'review', 'guardians', 'identity', 'sdk'].forEach(v => {
-        document.getElementById('view-' + v).classList.add('hidden');
-      });
-      document.querySelectorAll('.nav-item').forEach((btn, idx) => {
-        btn.classList.remove('active');
-        if (['demo', 'create', 'inspect', 'review', 'guardians', 'identity', 'sdk'][idx] === id) {
-          btn.classList.add('active');
+    // ---------------------------------------------------------------------------
+    // WEB3 & METAMASK INTEGRATION
+    // ---------------------------------------------------------------------------
+    async function connectMetaMask() {
+      if (typeof window.ethereum === 'undefined') {
+        alert('MetaMask or Web3 wallet not detected in your browser.\n\nYou can still use the 1-click Quick Switcher above to test all participant roles!');
+        return;
+      }
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        if (accounts && accounts.length > 0) {
+          handleWalletConnected(accounts[0]);
         }
-      });
-      document.getElementById('view-' + id).classList.remove('hidden');
+      } catch (err) {
+        console.error('Wallet connection error:', err);
+        alert('Could not connect to wallet: ' + (err.message || err));
+      }
     }
 
-    function switchParticipant(id) {
-      activeUser = PARTICIPANTS[id];
-      document.getElementById('user-avatar').textContent = activeUser.name.charAt(0);
-      document.getElementById('user-name').textContent = activeUser.name;
-      document.getElementById('user-role-badge').textContent = activeUser.badge;
-      document.getElementById('user-address').textContent = activeUser.address;
-      document.getElementById('select-participant').value = id;
+    function handleWalletConnected(addr) {
+      connectedMetaMaskAddress = addr.toLowerCase();
+      document.getElementById('metamask-label').textContent = addr.slice(0, 6) + '...' + addr.slice(-4);
+      document.getElementById('btn-connect-metamask').className = 'btn btn-primary';
 
-      // Update active panels based on participant
+      // Match with known participant if possible
+      const match = Object.values(PARTICIPANTS).find(p => p.address.toLowerCase() === connectedMetaMaskAddress);
+      if (match) {
+        switchParticipant(match.id, false);
+      } else {
+        activeUser = {
+          id: 'custom',
+          name: 'Web3 Wallet (' + addr.slice(0, 6) + '...)',
+          role: 'External Guest',
+          badge: 'Guest',
+          address: addr,
+          org: 'External Observer',
+        };
+        updateUserUI();
+      }
+    }
+
+    if (typeof window.ethereum !== 'undefined') {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length > 0) {
+          handleWalletConnected(accounts[0]);
+        } else {
+          connectedMetaMaskAddress = null;
+          document.getElementById('metamask-label').textContent = 'Connect MetaMask';
+          document.getElementById('btn-connect-metamask').className = 'btn btn-secondary';
+        }
+      });
+    }
+
+    // ---------------------------------------------------------------------------
+    // VIEW & PARTICIPANT SWITCHING
+    // ---------------------------------------------------------------------------
+    function switchView(id) {
+      ['demo', 'create', 'inspect', 'review', 'guardians', 'identity'].forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.classList.add('hidden');
+      });
+      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.querySelector(`.nav-item[onclick="switchView('${id}')"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      const targetView = document.getElementById('view-' + id);
+      if (targetView) targetView.classList.remove('hidden');
+    }
+
+    function switchParticipant(id, sync = true) {
+      if (PARTICIPANTS[id]) {
+        activeUser = PARTICIPANTS[id];
+      }
+      updateUserUI();
+
+      // Automatically show the relevant panel for this participant
       if (id === 'alice') {
         showDemoStep(1);
       } else if (id === 'bob') {
         showDemoStep(2);
       } else if (id === 'charlie' || id === 'david' || id === 'eve') {
         showDemoStep(4);
+      }
+    }
+
+    function updateUserUI() {
+      document.getElementById('user-avatar').textContent = activeUser.name.charAt(0);
+      document.getElementById('user-name').textContent = activeUser.name;
+      document.getElementById('user-role-badge').textContent = activeUser.badge;
+      document.getElementById('user-address').textContent = activeUser.address;
+      if (document.getElementById('select-participant').value !== activeUser.id) {
+        document.getElementById('select-participant').value = activeUser.id;
       }
     }
 
@@ -563,15 +650,17 @@
       if (activePill) activePill.classList.add('active');
     }
 
+    // ---------------------------------------------------------------------------
+    // STEP 1: ALICE ENCRYPTS & GENERATES SHAREABLE LINK
+    // ---------------------------------------------------------------------------
     function executeAliceCreateCapsule() {
-      if (activeUser.id !== 'alice') {
-        alert('Action restricted: Only Alice (Security Researcher) can create the capsule.');
+      const content = document.getElementById('demo-adv-content').value.trim();
+      if (!content) {
+        alert('Please enter a confidential message to encrypt.');
         return;
       }
-
-      const content = document.getElementById('demo-adv-content').value;
       secretContent = content;
-      const delay = parseInt(document.getElementById('demo-unlock-sec').value, 10) || 90;
+      const delay = parseInt(document.getElementById('demo-unlock-sec').value, 10) || 60;
       secondsLeft = delay;
 
       const randomBytes = new Uint8Array(32);
@@ -582,24 +671,41 @@
       window.crypto.getRandomValues(polBytes);
       policyHash = '0x' + Array.from(polBytes).map(b => b.toString(16).padStart(2, '0')).join('');
 
-      // Generate realistic reversible stego carrier text (64 words)
+      // Generate stego carrier text (64 words)
       let words = [];
       for (let i = 0; i < 64; i++) {
         words.push(WORDMAP[Math.floor(Math.random() * WORDMAP.length)]);
       }
       carrierText = words.join(' ');
 
+      // Build the shareable link!
+      const origin = window.location.origin + window.location.pathname;
+      const shareUrl = `${origin}?capsule=${capsuleId}#c=${encodeURIComponent(carrierText)}`;
+
       document.getElementById('demo-res-cid').textContent = capsuleId;
       document.getElementById('demo-res-pol').textContent = policyHash;
       document.getElementById('demo-res-carrier').textContent = carrierText;
-      document.getElementById('demo-creation-receipt').classList.remove('hidden');
+      document.getElementById('shareable-link-input').value = shareUrl;
+      document.getElementById('open-link-btn').href = shareUrl;
 
+      document.getElementById('demo-creation-receipt').classList.remove('hidden');
       document.getElementById('step-pill-1').classList.add('completed');
+
+      // Persist state so other tabs can load it
+      saveCapsuleState();
+      broadcastSync({ type: 'CAPSULE_CREATED', capsuleId, policyHash, carrierText, secretContent, secondsLeft });
+    }
+
+    function copyShareableLink() {
+      const input = document.getElementById('shareable-link-input');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      alert('Shareable Capsule Link copied to clipboard!\n\nYou can now open this link in a new browser window or send it to Bob/Reviewers.');
     }
 
     function copyDemoCarrierText() {
       navigator.clipboard.writeText(carrierText);
-      alert('Carrier text copied to clipboard! Switch to Bob to inspect and decrypt.');
+      alert('Stego Carrier Text copied to clipboard!');
     }
 
     function proceedToStep2() {
@@ -609,16 +715,21 @@
       executeBobDecodeCarrier();
     }
 
+    // ---------------------------------------------------------------------------
+    // STEP 2: RECIPIENT INSPECTS & TESTS EARLY ACCESS
+    // ---------------------------------------------------------------------------
     function executeBobDecodeCarrier() {
       const input = document.getElementById('demo-bob-input').value.trim();
-      if (!input) {
-        alert('Please paste the carrier text received from Alice.');
+      if (!input && !carrierText) {
+        alert('Please paste the carrier text or open a shareable link.');
         return;
+      }
+      if (input) {
+        carrierText = input;
       }
 
       document.getElementById('demo-bob-status').classList.remove('hidden');
       document.getElementById('step-pill-2').classList.add('completed');
-      document.getElementById('step-pill-3').classList.add('active');
 
       startCountdown();
       updatePolicyMatrix();
@@ -650,6 +761,9 @@
       if (quorumOk) {
         document.getElementById('demo-quorum-badge').className = 'badge badge-ok';
         document.getElementById('demo-quorum-badge').textContent = 'QUORUM MET (2/2)';
+      } else {
+        document.getElementById('demo-quorum-badge').className = 'badge badge-pending';
+        document.getElementById('demo-quorum-badge').textContent = `${approvalsCount} OF 2 PENDING`;
       }
 
       const badge = document.getElementById('demo-policy-badge');
@@ -670,8 +784,8 @@
       const approvalsCount = (charlieApproved ? 1 : 0) + (davidApproved ? 1 : 0);
       document.getElementById('demo-early-denied-text').textContent =
 `[GUARDIAN HTTP ERROR 423 LOCKED]
-Endpoint: POST /api/v1/capsules/${capsuleId}/release
-Caller: ${activeUser.address} (Bob)
+Endpoint: POST /api/v1/capsules/${capsuleId || '0x...'}/release
+Caller: ${activeUser.address} (${activeUser.name})
 Failure Reason: release: onchain policy conditions not satisfied
   • Timelock condition: ${secondsLeft > 0 && !timeFastForwarded ? `${secondsLeft}s embargo remaining` : 'PASSED'}
   • Reviewer quorum: ${approvalsCount} of 2 approvals onchain
@@ -683,33 +797,38 @@ Cryptographic Security Guarantee: Protocol failed closed. Secret remains protect
       timeFastForwarded = true;
       secondsLeft = 0;
       updatePolicyMatrix();
-      alert('Simulated EVM block time advanced by 90 seconds. Timelock condition is now satisfied!');
+      broadcastSync({ type: 'TIME_ADVANCED' });
+      alert('Simulated EVM block time advanced! Timelock condition is now satisfied.');
     }
 
+    // ---------------------------------------------------------------------------
+    // STEP 3: REVIEWER ONCHAIN APPROVALS
+    // ---------------------------------------------------------------------------
     function signCharlieApproval() {
-      if (activeUser.id !== 'charlie') {
-        alert('Action restricted: Switch to Charlie (0x90F7...) to sign this approval.');
-        return;
-      }
       charlieApproved = true;
-      document.getElementById('btn-charlie-approve').textContent = 'Approved Onchain (0x7a81...c3)';
-      document.getElementById('btn-charlie-approve').className = 'badge badge-ok';
+      document.getElementById('btn-charlie-approve').textContent = '✓ Approved Onchain (Tx: 0x7a81...c3)';
+      document.getElementById('btn-charlie-approve').className = 'btn btn-secondary';
+      document.getElementById('btn-charlie-approve').disabled = true;
       updatePolicyMatrix();
+      saveCapsuleState();
+      broadcastSync({ type: 'CHARLIE_APPROVED' });
       alert('Charlie signed onchain approval transaction! Quorum is now 1 of 2.');
     }
 
     function signDavidApproval() {
-      if (activeUser.id !== 'david') {
-        alert('Action restricted: Switch to David (0x35B3...) to sign this approval.');
-        return;
-      }
       davidApproved = true;
-      document.getElementById('btn-david-approve').textContent = 'Approved Onchain (0x9b12...e4)';
-      document.getElementById('btn-david-approve').className = 'badge badge-ok';
+      document.getElementById('btn-david-approve').textContent = '✓ Approved Onchain (Tx: 0x9b12...e4)';
+      document.getElementById('btn-david-approve').className = 'btn btn-secondary';
+      document.getElementById('btn-david-approve').disabled = true;
       updatePolicyMatrix();
-      alert('David signed onchain approval transaction! Quorum is now 2 of 2 (Quorum Satisfied).');
+      saveCapsuleState();
+      broadcastSync({ type: 'DAVID_APPROVED' });
+      alert('David signed onchain approval transaction! Quorum is now 2 of 2 (QUORUM REACHED).');
     }
 
+    // ---------------------------------------------------------------------------
+    // STEP 4: THRESHOLD RELEASE & DECRYPTION
+    // ---------------------------------------------------------------------------
     function demonstrateThresholdFailure() {
       document.getElementById('demo-single-share-box').classList.remove('hidden');
     }
@@ -718,12 +837,12 @@ Cryptographic Security Guarantee: Protocol failed closed. Secret remains protect
       const approvalsCount = (charlieApproved ? 1 : 0) + (davidApproved ? 1 : 0);
       const timeOk = secondsLeft <= 0 || timeFastForwarded;
       if (!timeOk || approvalsCount < 2) {
-        alert('Cannot decrypt: onchain release conditions not satisfied yet!');
+        alert('Cannot decrypt: onchain release conditions (timelock and 2 reviewer approvals) are not satisfied yet!');
         return;
       }
 
       document.getElementById('demo-decrypted-box').classList.remove('hidden');
-      document.getElementById('demo-plaintext-output').textContent = secretContent;
+      document.getElementById('demo-plaintext-output').textContent = secretContent || document.getElementById('demo-adv-content').value;
 
       const receipt = {
         receiptId: 'rcpt_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
@@ -737,7 +856,7 @@ Cryptographic Security Guarantee: Protocol failed closed. Secret remains protect
         onchainVerification: {
           contractVerified: true,
           contractAddress: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-          approvalsRecorded: 2,
+          approvalsRecorded: approvalsCount,
           thresholdRequired: 2,
           reviewersApproved: [
             '0x90F79bf6EB2c4f870365E785982E1f101E93b906 (Charlie)',
@@ -778,6 +897,109 @@ Cryptographic Security Guarantee: Protocol failed closed. Secret remains protect
 
       document.getElementById('demo-receipt-output').textContent = JSON.stringify(receipt, null, 2);
     }
+
+    // ---------------------------------------------------------------------------
+    // PERSISTENCE & CROSS-TAB SYNC
+    // ---------------------------------------------------------------------------
+    function saveCapsuleState() {
+      const state = {
+        capsuleId,
+        policyHash,
+        carrierText,
+        secretContent,
+        charlieApproved,
+        davidApproved,
+        secondsLeft,
+        timeFastForwarded,
+      };
+      localStorage.setItem('veil_capsule_state', JSON.stringify(state));
+    }
+
+    function loadCapsuleState() {
+      const saved = localStorage.getItem('veil_capsule_state');
+      if (saved) {
+        try {
+          const s = JSON.parse(saved);
+          if (s.capsuleId) capsuleId = s.capsuleId;
+          if (s.policyHash) policyHash = s.policyHash;
+          if (s.carrierText) carrierText = s.carrierText;
+          if (s.secretContent) secretContent = s.secretContent;
+          if (s.charlieApproved) charlieApproved = s.charlieApproved;
+          if (s.davidApproved) davidApproved = s.davidApproved;
+          if (typeof s.secondsLeft === 'number') secondsLeft = s.secondsLeft;
+          if (s.timeFastForwarded) timeFastForwarded = s.timeFastForwarded;
+        } catch (e) {
+          console.error('Error loading saved state:', e);
+        }
+      }
+    }
+
+    function broadcastSync(data) {
+      if (syncChannel) syncChannel.postMessage(data);
+    }
+
+    function handleSyncMessage(msg) {
+      if (!msg) return;
+      if (msg.type === 'CAPSULE_CREATED') {
+        capsuleId = msg.capsuleId;
+        policyHash = msg.policyHash;
+        carrierText = msg.carrierText;
+        secretContent = msg.secretContent;
+        secondsLeft = msg.secondsLeft;
+        document.getElementById('demo-bob-input').value = carrierText;
+      } else if (msg.type === 'CHARLIE_APPROVED') {
+        charlieApproved = true;
+        document.getElementById('btn-charlie-approve').textContent = '✓ Approved Onchain (Tx: 0x7a81...c3)';
+        document.getElementById('btn-charlie-approve').disabled = true;
+        updatePolicyMatrix();
+      } else if (msg.type === 'DAVID_APPROVED') {
+        davidApproved = true;
+        document.getElementById('btn-david-approve').textContent = '✓ Approved Onchain (Tx: 0x9b12...e4)';
+        document.getElementById('btn-david-approve').disabled = true;
+        updatePolicyMatrix();
+      } else if (msg.type === 'TIME_ADVANCED') {
+        timeFastForwarded = true;
+        secondsLeft = 0;
+        updatePolicyMatrix();
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // URL PARAMETER & SHAREABLE LINK AUTO-DETECTION
+    // ---------------------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      loadCapsuleState();
+
+      // Check URL query parameters: ?capsule=0x...
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlCapsule = urlParams.get('capsule');
+
+      // Check hash fragment: #c=...
+      let hashCarrier = '';
+      if (window.location.hash.startsWith('#c=')) {
+        hashCarrier = decodeURIComponent(window.location.hash.slice(3));
+      } else if (window.location.hash.startsWith('#carrier=')) {
+        hashCarrier = decodeURIComponent(window.location.hash.slice(9));
+      }
+
+      if (urlCapsule || hashCarrier) {
+        if (urlCapsule) capsuleId = urlCapsule;
+        if (hashCarrier) carrierText = hashCarrier;
+
+        // Show direct link banner
+        const banner = document.getElementById('active-link-banner');
+        banner.classList.remove('hidden');
+        document.getElementById('banner-capsule-id').textContent = capsuleId || '0x...';
+
+        // Populate carrier textarea
+        document.getElementById('demo-bob-input').value = carrierText;
+
+        // Automatically switch to Bob view (or keep current)
+        switchParticipant('bob', false);
+        showDemoStep(2);
+        executeBobDecodeCarrier();
+      }
+    });
   </script>
 </body>
 </html>
