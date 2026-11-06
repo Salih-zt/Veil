@@ -10,6 +10,9 @@
     "examples/*"
   ],
   "scripts": {
+    "dev": "node node_modules/next/dist/bin/next dev",
+    "build": "node node_modules/next/dist/bin/next build",
+    "start": "node node_modules/next/dist/bin/next start",
     "test": "node scripts/test-all.mjs",
     "test:unit": "node --import ./test/lib/resolve-ts.mjs --test test/unit/*.test.mjs",
     "test:contracts": "cd contracts && forge.exe test",
@@ -33,7 +36,20 @@
     "@noble/curves": "^2.0.0",
     "@noble/hashes": "^2.0.0",
     "@scure/bip39": "^1.6.0",
+    "lucide-react": "^0.468.0",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0"
   },
   "keywords": [
     "veil",
@@ -46,5 +62,8 @@
     "ethglobal-mumbai"
   ],
   "author": "VEIL Protocol Core Team",
-  "license": "MIT"
+  "license": "MIT",
+  "optionalDependencies": {
+    "@next/swc-win32-x64-msvc": "^15.1.0"
+  }
 }

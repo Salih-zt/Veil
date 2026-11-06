@@ -3,6 +3,7 @@ node_modules/
 .pnpm-store/
 
 # Build and compilation outputs
+.next/
 dist/
 build/
 out/
