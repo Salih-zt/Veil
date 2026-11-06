@@ -1,7 +1,7 @@
-// VEIL Protocol — Thin REST API Server (Phase 7)
+// VEIL Protocol — REST API Server with Human-Operated Demo Extensions
 //
-// Provides standardized REST API endpoints for external applications to query policies,
-// deposit metadata, record approvals, and coordinate guardian release requests.
+// Provides standardized REST API endpoints for external applications and the
+// human-operated ETHGlobal judge demonstration (Northstar Payments scenario).
 //
 // Invariants:
 //   - Zero plaintext: The server NEVER accepts or stores plaintext secrets or DEKs.
@@ -10,9 +10,50 @@
 //   - Client-side final decryption: The client performs local unsealing, reconstruction, and decryption.
 
 import { createServer } from 'node:http'
+import { verifyMessage } from 'viem'
 import { VeilClient } from '../../packages/sdk/src/client.ts'
 import { MemoryStorageAdapter } from '../../packages/sdk/src/adapters/storage.ts'
 import { DirectGuardianAdapter } from '../../packages/sdk/src/adapters/guardian.ts'
+import { generateMockWorldProof } from '../../packages/crypto/identity/world-id.mjs'
+import { issueOrgCredential, TEST_ORGS } from '../../packages/crypto/identity/org-auth.mjs'
+
+export const DEMO_PARTICIPANTS = {
+  alice: {
+    name: 'Alice',
+    role: 'Security Researcher',
+    organization: 'Independent AppSec',
+    address: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+    description: 'Discovers the vulnerability and authors the confidential capsule',
+  },
+  bob: {
+    name: 'Bob',
+    role: 'Security Lead',
+    organization: 'Northstar Payments',
+    address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+    description: 'Designated authorized recipient for Northstar vulnerability disclosures',
+  },
+  charlie: {
+    name: 'Charlie',
+    role: 'AppSec Reviewer',
+    organization: 'Northstar Advisory',
+    address: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
+    description: 'Designated multi-party reviewer 1 (signs release approval tx)',
+  },
+  david: {
+    name: 'David',
+    role: 'Cryptographer Reviewer',
+    organization: 'Northstar Payments',
+    address: '0x35B33Ae737809aa6B03fe4124B760E14e5d996a0',
+    description: 'Designated multi-party reviewer 2 (signs release approval tx)',
+  },
+  eve: {
+    name: 'Eve',
+    role: 'External Auditor',
+    organization: 'Cerberus Audits',
+    address: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc',
+    description: 'Designated multi-party reviewer 3 (quorum threshold is 2 of 3)',
+  },
+}
 
 export function startApiServer({
   port = 8088,
@@ -23,6 +64,7 @@ export function startApiServer({
 } = {}) {
   // Simple in-memory sliding rate limiter
   const requestCounts = new Map()
+  const activeChallenges = new Map() // address -> { nonce, issuedAt }
 
   function checkRateLimit(ip) {
     const now = Date.now()
@@ -103,7 +145,7 @@ export function startApiServer({
         req.on('end', () => {
           try {
             resolve(data ? JSON.parse(data) : {})
-          } catch (e) {
+          } catch {
             reject(new Error('Invalid JSON payload'))
           }
         })
@@ -112,6 +154,150 @@ export function startApiServer({
     }
 
     try {
+      // -----------------------------------------------------------------------
+      // DEMO AUTHENTICATION & PARTICIPANTS ENDPOINTS
+      // -----------------------------------------------------------------------
+
+      // GET /api/v1/demo/participants — Retrieve authorized demo participants
+      if (req.method === 'GET' && pathname === '/api/v1/demo/participants') {
+        return sendJson(res, 200, {
+          ok: true,
+          company: 'Northstar Payments',
+          scenario: 'Vulnerability Disclosure & Coordinated Embargo (CVE-2026-8812)',
+          participants: DEMO_PARTICIPANTS,
+        })
+      }
+
+      // POST /api/v1/auth/challenge — Generate SIWE-style challenge for wallet
+      if (req.method === 'POST' && pathname === '/api/v1/auth/challenge') {
+        const body = await getJsonBody()
+        if (!body.address) {
+          return sendJson(res, 400, { ok: false, error: 'MISSING_ADDRESS', message: 'address is required' })
+        }
+        const address = body.address.toLowerCase()
+        const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join('')
+        const issuedAt = new Date().toISOString()
+        const message = [
+          'veil.protocol wants you to sign in with your Ethereum account:',
+          body.address,
+          '',
+          'Sign in to VEIL Protocol Demo Workspace (Northstar Payments)',
+          '',
+          'URI: http://localhost:3000',
+          'Version: 1',
+          `Chain ID: ${client?.chainId || 31337}`,
+          `Nonce: ${nonce}`,
+          `Issued At: ${issuedAt}`,
+        ].join('\n')
+
+        activeChallenges.set(address, { nonce, message, issuedAt })
+        return sendJson(res, 200, { ok: true, nonce, message, address })
+      }
+
+      // POST /api/v1/auth/verify — Verify wallet signature
+      if (req.method === 'POST' && pathname === '/api/v1/auth/verify') {
+        const body = await getJsonBody()
+        const { address, signature, message } = body
+        if (!address || !signature || !message) {
+          return sendJson(res, 400, { ok: false, error: 'MISSING_PARAMETERS', message: 'address, signature, and message required' })
+        }
+
+        const isValid = await verifyMessage({
+          address,
+          message,
+          signature,
+        })
+
+        if (!isValid) {
+          return sendJson(res, 401, { ok: false, error: 'INVALID_SIGNATURE', message: 'Cryptographic signature verification failed' })
+        }
+
+        // Identify matching demo participant role
+        const match = Object.values(DEMO_PARTICIPANTS).find(p => p.address.toLowerCase() === address.toLowerCase())
+
+        return sendJson(res, 200, {
+          ok: true,
+          authenticated: true,
+          address,
+          participant: match || { name: 'External Participant', role: 'Guest', address },
+          sessionToken: `veil_sess_${Array.from(crypto.getRandomValues(new Uint8Array(24))).map(b => b.toString(16).padStart(2, '0')).join('')}`,
+        })
+      }
+
+      // POST /api/v1/demo/identity/world-id — Issue/return World ID 4.0 proof fixture for authorized recipient
+      if (req.method === 'POST' && pathname === '/api/v1/demo/identity/world-id') {
+        const body = await getJsonBody()
+        const recipient = body.recipient || DEMO_PARTICIPANTS.bob.address
+        const ephemeralPubkey = body.ephemeralPubkey || '0x00'
+        const capsuleId = body.capsuleId || '0x00'
+
+        const proof = generateMockWorldProof({
+          action: `veil-capsule-${capsuleId.slice(2, 10)}`,
+          signalRecipient: recipient,
+          signalPubkey: ephemeralPubkey,
+          environment: 'staging',
+        })
+
+        return sendJson(res, 200, {
+          ok: true,
+          label: 'Local Demo Semaphore Groth16 Verifier',
+          proof,
+        })
+      }
+
+      // POST /api/v1/demo/identity/org-credential — Issue verified Northstar Payments role credential
+      if (req.method === 'POST' && pathname === '/api/v1/demo/identity/org-credential') {
+        const body = await getJsonBody()
+        const recipient = body.recipient || DEMO_PARTICIPANTS.bob.address
+        const capsuleId = body.capsuleId || '*'
+
+        const cred = await issueOrgCredential({
+          orgId: 'northstar',
+          authorityPrivateKey: TEST_ORGS.northstar.privateKey,
+          recipient,
+          role: 'Security Lead',
+          capsuleScope: capsuleId,
+        })
+
+        return sendJson(res, 200, {
+          ok: true,
+          label: 'Northstar Payments Authorized Security Lead Credential',
+          credential: cred,
+        })
+      }
+
+      // GET /api/v1/demo/guardians/status — Query running guardian cluster status
+      if (req.method === 'GET' && pathname === '/api/v1/demo/guardians/status') {
+        const guardianUrls = [
+          { id: 'guardian-alpha', url: 'http://127.0.0.1:8791', port: 8791 },
+          { id: 'guardian-beta', url: 'http://127.0.0.1:8792', port: 8792 },
+          { id: 'guardian-gamma', url: 'http://127.0.0.1:8793', port: 8793 },
+        ]
+
+        const statuses = await Promise.all(
+          guardianUrls.map(async (g) => {
+            try {
+              const r = await fetch(`${g.url}/health`, { signal: AbortSignal.timeout(1000) })
+              const data = await r.json()
+              return { ...g, online: true, ...data }
+            } catch {
+              return { ...g, online: false, error: 'Node unreachable or offline' }
+            }
+          })
+        )
+
+        return sendJson(res, 200, {
+          ok: true,
+          cluster: statuses,
+          thresholdRequired: 2,
+          totalNodes: 3,
+        })
+      }
+
+      // -----------------------------------------------------------------------
+      // CORE PROTOCOL ENDPOINTS
+      // -----------------------------------------------------------------------
+
       // 1. POST /api/v1/capsules — Create a capsule (requires encrypted ciphertext or plaintext)
       if (req.method === 'POST' && pathname === '/api/v1/capsules') {
         const body = await getJsonBody()

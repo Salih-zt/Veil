@@ -16,8 +16,10 @@
     "test:integration": "node --import ./test/lib/resolve-ts.mjs --test test/integration/*.test.mjs",
     "test:demo": "node --import ./test/lib/resolve-ts.mjs scripts/demo-e2e.mjs",
     "test:scenario": "node --import ./test/lib/resolve-ts.mjs examples/vulnerability-disclosure/run-scenario.ts",
+    "test:judge-demo": "node --import ./test/lib/resolve-ts.mjs --test test/integration/demo-workflow.test.mjs",
     "guardians": "node scripts/start-guardians.mjs",
     "api": "node scripts/start-api.mjs",
+    "serve": "node scripts/serve-web.mjs",
     "demo": "node --import ./test/lib/resolve-ts.mjs scripts/demo-e2e.mjs"
   },
   "dependencies": {

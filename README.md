@@ -80,6 +80,39 @@ veil protocol/
 
 ---
 
+## 🏆 ETHGlobal Judge Demo: Northstar Payments (`CVE-2026-8812`)
+
+A complete, human-operated demonstration experience designed specifically for ETHGlobal judges and evaluators. Real participants sign in with their Ethereum wallets, conceal zero-day vulnerability disclosures inside natural English steganography, enforce multi-party onchain governance, and demonstrate cryptographic fail-closed states before authorized client-side decryption.
+
+### 📚 Demo Documentation
+- **[Judge Demo Runbook (`DEMO_RUNBOOK.md`)](DEMO_RUNBOOK.md)**: Screen-by-screen walkthrough, presentation timing, and operator guidance.
+- **[Demo Accounts & Key Directory (`DEMO_ACCOUNTS.md`)](DEMO_ACCOUNTS.md)**: Details of Alice, Bob, Charlie, David, and Eve (addresses, roles, MetaMask import guides).
+- **[Demo Scenario Specification (`DEMO_SCENARIO.md`)](DEMO_SCENARIO.md)**: Deep dive into the Northstar Payments double-credit race condition (`CVE-2026-8812`) and release policy.
+
+### 🚀 Running the Human-Operated Demo
+Launch the zero-dependency interactive web dashboard on `http://localhost:3000`:
+
+```bash
+# 1. Start Local Anvil Testnet (Terminal 1)
+anvil --port 8545 --chain-id 31337
+
+# 2. Deploy Policy Registry Contract (Terminal 2)
+forge script contracts/script/DeployVeilPolicyRegistry.s.sol:DeployVeilPolicyRegistry --rpc-url http://127.0.0.1:8545 --broadcast
+
+# 3. Start Guardian Cluster (Terminal 3)
+node scripts/start-guardians.mjs
+
+# 4. Start REST API (Terminal 4)
+node scripts/start-api.mjs
+
+# 5. Start Web Dashboard (Terminal 5)
+node scripts/serve-web.mjs
+```
+
+Open **`http://localhost:3000`** in your browser to begin the walkthrough.
+
+---
+
 ## Quickstart & Verification
 
 ### 1. Prerequisites

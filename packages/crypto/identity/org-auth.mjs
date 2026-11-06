@@ -52,11 +52,18 @@ export const TEST_ORGS = {
     authorityAddress: privateKeyToAccount('0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1').address,
     roles: ['Key Custodian', 'Operator'],
   },
+  northstar: {
+    orgId: 'northstar',
+    privateKey: '0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6',
+    authorityAddress: privateKeyToAccount('0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6').address,
+    roles: ['Security Lead', 'Incident Responder', 'Compliance Auditor'],
+  },
 }
 
 export const DEFAULT_TRUSTED_AUTHORITIES = {
   paycore: TEST_ORGS.paycore.authorityAddress.toLowerCase(),
   cerberus: TEST_ORGS.cerberus.authorityAddress.toLowerCase(),
+  northstar: TEST_ORGS.northstar.authorityAddress.toLowerCase(),
 }
 
 /**

@@ -1,0 +1,113 @@
+# VEIL — Human-Operated Judge Demo Scenario: Northstar Payments
+
+> **Tagline:** Your secrets. Your conditions. Your control.  
+> **Event:** ETHGlobal Mumbai 2026  
+> **Target Scenario:** Coordinated Vulnerability Disclosure & Embargo Management  
+> **Target Entity:** Northstar Payments Inc. (Fictional Global Settlement Network)
+
+---
+
+## 1. Executive Summary
+
+In mission-critical financial systems, premature exposure of a zero-day exploit causes catastrophic market loss, while unilateral vendor suppression leaves users vulnerable. **VEIL solves coordinated vulnerability disclosure** by encoding proof-of-vulnerability into natural-language reversible steganographic carrier text, locking the Data Encryption Key (DEK) across independent threshold guardians, and registering an onchain release policy enforced by smart contracts and zero-knowledge identity proofs.
+
+This scenario demonstrates a live, human-operated vulnerability disclosure workflow at **Northstar Payments**, a high-volume payment processor.
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│               NORTHSTAR PAYMENTS: DISCLOSURE LIFECYCLE                  │
+├───────────────────┬───────────────────┬────────────────────────────────┤
+│ 1. CONCEAL & LOCK │ 2. PROVE EMBARGO  │ 3. THRESHOLD RELEASE           │
+│                   │                   │                                │
+│ Alice discovers   │ Bob receives      │ Charlie & David sign onchain   │
+│ double-credit bug │ stego carrier     │ 90s embargo window elapses     │
+│ Encrypts DEK with │ Early access is   │ Bob proves World ID + role     │
+│ AES-SIV + Shamir  │ strictly rejected │ 2 of 3 guardians unseal shares │
+│ Carrier text sent │ onchain & nodes   │ Bob decrypts client-side       │
+└───────────────────┴───────────────────┴────────────────────────────────┘
+```
+
+---
+
+## 2. Dramatis Personae
+
+| Role | Persona | Organization & Title | Verified Wallet Address |
+| :--- | :--- | :--- | :--- |
+| **Vulnerability Researcher** | **Alice** | Independent White-Hat Researcher | `0x70997970C51812dc3A010C7d01b50e0d17dc79C8` |
+| **Authorized Recipient** | **Bob** | Northstar Payments — Security Lead | `0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC` |
+| **Designated Reviewer 1** | **Charlie** | Northstar Payments — VP of Engineering | `0x90F79bf6EB2c4f870365E785982E1f101E93b906` |
+| **Designated Reviewer 2** | **David** | Northstar Payments — Lead Core Architect | `0x35B33Ae737809aa6B03fe4124B760E14e5d996a0` |
+| **Designated Reviewer 3** | **Eve** | Northstar Payments — Chief Compliance Officer | `0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc` |
+
+---
+
+## 3. The Vulnerability: `CVE-2026-8812`
+
+### Advisory Details
+- **Identifier:** `CVE-2026-8812`
+- **Severity:** Critical (CVSS 9.8)
+- **Component:** `NorthstarSettlementPipeline.processBatch()`
+- **Vulnerability Class:** Concurrency / Double-Credit Race Condition
+- **Confidential Exploit & Hotfix Payload:**
+```json
+{
+  "advisory": "CVE-2026-8812",
+  "component": "Northstar Settlement Batch Engine",
+  "impact": "Concurrent settlement calls exploit idempotency window, causing double-crediting",
+  "reproduction": "curl -X POST https://api.northstar.internal/settle -H 'X-Idempotency-Key: ns-test-01' --repeat 4",
+  "patchCommit": "0x4f89d31c0e27a6b82937105829104c8109275019"
+}
+```
+
+If leaked prematurely to a public chat, attacker groups could drain Northstar settlement liquidity. If withheld completely, Northstar engineers cannot prepare a hotfix.
+
+---
+
+## 4. The VEIL Capsule Policy
+
+Alice builds an onchain programmable policy for `CVE-2026-8812`:
+
+1. **Carrier Steganography**: The entire encrypted capsule descriptor is transformed into natural English prose using a reversible 256-word bijection wordmap. Anyone monitoring Alice's communication channels sees an ordinary status update.
+2. **Onchain Smart Contract Registry (`VeilPolicyRegistry.sol`)**:
+   - Creator: Alice (`0x7099...`)
+   - Recipient: Bob (`0x3C44...`)
+   - Reviewers: Charlie, David, Eve (3 total)
+   - Reviewer Quorum: Minimum **2 approvals required** ($M=2$)
+   - Timelock Embargo: **90 seconds** after registration (shortened for the live judge presentation)
+   - Expiry: 30 minutes after unlock
+   - Required Org Identity: `orgId = "northstar"`, `role = "Security Lead"`
+3. **Threshold Key Guardians**:
+   - 3 independent guardian services:
+     - Guardian Alpha (`http://127.0.0.1:8791`)
+     - Guardian Beta (`http://127.0.0.1:8792`)
+     - Guardian Gamma (`http://127.0.0.1:8793`)
+   - Threshold Policy: **$K=2$ of 3 shares required**.
+   - The DEK is split using $(2, 3)$ Shamir Secret Sharing over Galois Field $GF(256)$.
+   - Each share is sealed using an ephemeral X25519 authenticated Diffie-Hellman envelope addressed to the respective guardian's public key.
+4. **Zero-Knowledge Proof of Humanity**:
+   - Bob must present a World ID 4.0 Groth16 zero-knowledge proof generated by the Local Demo Semaphore Groth16 Verifier.
+   - The proof binds Bob's address and his ephemeral X25519 recipient public key to the capsule ID, preventing Sybil attacks and share interception.
+
+---
+
+## 5. Failure-Mode Demonstrations
+
+The human demonstration explicitly demonstrates two real cryptographic fail-closed states before showing successful decryption:
+
+### 1. Fail-Closed Early Access Attempt
+- Bob pastes the carrier text into the VEIL dashboard immediately after receiving it.
+- Bob requests early disclosure.
+- **Result:** Refused with verifiable onchain error codes:
+  - `TIMELOCK_ACTIVE`: 90-second embargo has not elapsed.
+  - `INSUFFICIENT_QUORUM`: 0 of 2 required reviewer approvals recorded.
+  - Smart contracts and guardians return `403 Policy Unsatisfied`.
+
+### 2. Threshold Security Failure ($K=1$ of 2)
+- Even after reviewer approvals are committed and the 90-second embargo expires, Bob attempts to reconstruct the DEK using only **1 guardian share**.
+- **Result:** $GF(256)$ Lagrange interpolation strictly fails closed. Mathematically, a degree 1 Shamir polynomial reveals **zero bits** of Shannon entropy about the secret key with fewer than 2 evaluations. The payload remains cryptographically unreadable.
+
+### 3. Authorized Disclosure ($K=2$ of 3)
+- Bob collects the second sealed share from Guardian Beta.
+- Bob unseals both shares locally using his ephemeral X25519 private key.
+- The 256-bit DEK is reconstructed in client transient memory and immediately decrypts `CVE-2026-8812` using AES-256-SIV AEAD.
+- A cryptographically verifiable **Disclosure Receipt** is produced and displayed.
