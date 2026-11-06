@@ -60,6 +60,9 @@
   ],
   "author": "VEIL Protocol Core Team",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "optionalDependencies": {
     "@next/swc-win32-x64-msvc": "^15.1.0"
   }

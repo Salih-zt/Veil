@@ -5,17 +5,22 @@ import { DatabaseSync } from 'node:sqlite'
 import { mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { tmpdir } from 'node:os'
 import { sha256 } from '@noble/hashes/sha2.js'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
-const DATA_DIR = join(HERE, 'data')
-mkdirSync(DATA_DIR, { recursive: true })
+const DATA_DIR = process.env.VERCEL ? tmpdir() : join(HERE, 'data')
+try {
+  mkdirSync(DATA_DIR, { recursive: true })
+} catch {
+  // Read-only filesystem fallback
+}
 
 function toHex(bytes) {
   return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-export function initDatabase(dbPath = join(DATA_DIR, 'veil.sqlite')) {
+export function initDatabase(dbPath = (process.env.DATABASE_PATH || join(DATA_DIR, 'veil.sqlite'))) {
   const db = new DatabaseSync(dbPath)
 
   // Enable WAL mode for high concurrency
