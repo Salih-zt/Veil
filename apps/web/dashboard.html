@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VEIL — Programmable Secret Capsules</title>
+  <style>
+    :root {
+      --bg-primary: #171A10;
+      --bg-sidebar: #1D2115;
+      --bg-surface: #252A1B;
+      --bg-elevated: #303624;
+      --bg-input: #12150D;
+      --primary-olive: #858C50;
+      --light-sage: #B2B77A;
+      --muted-gold: #C6B95F;
+      --warm-yellow: #E6D98D;
+      --text-primary: #F3F0E4;
+      --text-secondary: #A9A58D;
+      --text-muted: #6C7058;
+      --border-subtle: #2D3321;
+      --border-strong: #3A402C;
+      --status-ok: #858C50;
+      --status-pending: #C6B95F;
+      --status-denied: #A3483E;
+      --status-locked: #70755A;
+      --font-mono: 'JetBrains Mono', Consolas, Menlo, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-sans); font-size: 14px; line-height: 1.5; }
+    .mono { font-family: var(--font-mono); }
+    .app-container { display: flex; min-height: 100vh; }
+    .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border-strong); display: flex; flex-direction: column; flex-shrink: 0; }
+    .sidebar-header { padding: 24px 20px; border-bottom: 1px solid var(--border-subtle); }
+    .logo-badge { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; letter-spacing: 0.12em; color: var(--warm-yellow); }
+    .logo-dot { width: 10px; height: 10px; background: var(--muted-gold); border-radius: 2px; }
+    .tagline { margin-top: 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .sidebar-nav { padding: 16px 10px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 4px; color: var(--text-secondary); background: transparent; border: 1px solid transparent; cursor: pointer; font-size: 13px; font-weight: 500; text-align: left; transition: all 0.15s ease; width: 100%; }
+    .nav-item:hover { background: var(--bg-surface); color: var(--text-primary); }
+    .nav-item.active { background: var(--bg-surface); color: var(--warm-yellow); border-color: var(--border-strong); border-left: 3px solid var(--muted-gold); }
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border-subtle); font-size: 11px; color: var(--text-muted); }
+    .main-content { flex: 1; padding: 32px 40px; max-width: 1200px; overflow-y: auto; }
+    .page-header { margin-bottom: 28px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; }
+    .page-title { font-size: 22px; font-weight: 600; color: var(--text-primary); }
+    .page-desc { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+    .panel { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 6px; padding: 24px; margin-bottom: 24px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
+    .panel-title { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--light-sage); }
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 6px; }
+    .form-input, .form-textarea { width: 100%; background: var(--bg-input); border: 1px solid var(--border-strong); border-radius: 4px; padding: 10px 12px; color: var(--text-primary); font-family: var(--font-sans); font-size: 13px; outline: none; }
+    .form-input.mono, .form-textarea.mono { font-family: var(--font-mono); font-size: 12px; }
+    .form-input:focus, .form-textarea:focus { border-color: var(--primary-olive); }
+    .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all 0.15s ease; }
+    .btn-primary { background: var(--primary-olive); color: #12150D; border-color: var(--light-sage); }
+    .btn-primary:hover { background: var(--light-sage); }
+    .btn-secondary { background: var(--bg-elevated); color: var(--text-primary); border-color: var(--border-strong); }
+    .btn-secondary:hover { background: var(--border-strong); }
+    .btn-warning { background: var(--muted-gold); color: #12150D; border-color: var(--warm-yellow); }
+    .btn-warning:hover { background: var(--warm-yellow); }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-ok { background: rgba(133, 140, 80, 0.2); color: var(--light-sage); border: 1px solid var(--primary-olive); }
+    .badge-pending { background: rgba(198, 185, 95, 0.2); color: var(--warm-yellow); border: 1px solid var(--muted-gold); }
+    .badge-denied { background: rgba(163, 72, 62, 0.2); color: #E5877E; border: 1px solid var(--status-denied); }
+    .badge-locked { background: rgba(112, 117, 90, 0.2); color: var(--text-secondary); border: 1px solid var(--status-locked); }
+    .output-box { background: var(--bg-input); border: 1px solid var(--border-strong); border-radius: 4px; padding: 14px; font-family: var(--font-mono); font-size: 12px; color: var(--warm-yellow); white-space: pre-wrap; word-break: break-all; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th { text-align: left; padding: 10px 12px; background: var(--bg-elevated); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-strong); }
+    .data-table td { padding: 12px; border-bottom: 1px solid var(--border-subtle); color: var(--text-primary); }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-badge"><div class="logo-dot"></div><span>VEIL</span></div>
+        <div class="tagline">Programmable Secret Capsules</div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="switchView('create')">01. Capsule Creator</button>
+        <button class="nav-item" onclick="switchView('inspect')">02. Inspect & Reveal</button>
+        <button class="nav-item" onclick="switchView('review')">03. Reviewer Portal</button>
+        <button class="nav-item" onclick="switchView('guardians')">04. Guardian Cluster</button>
+        <button class="nav-item" onclick="switchView('identity')">05. Identity & Access</button>
+        <button class="nav-item" onclick="switchView('sdk')">06. Developer SDK & API</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div>ETHGlobal Mumbai 2026</div>
+        <div style="margin-top: 4px; color: var(--light-sage)">Status: Active Protocol</div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- VIEW 1: CREATOR -->
+      <section id="view-create">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Create Programmable Capsule</h1>
+            <p class="page-desc">Encrypt a secret under an immutable onchain policy. Distribute sealed Shamir shares across independent guardians and encode carrier text.</p>
+          </div>
+          <span class="badge badge-ok">Actor: Alice (Creator)</span>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">1. Secret Payload</span></div>
+          <div class="form-group">
+            <label class="form-label">Advisory Title</label>
+            <input id="adv-title" class="form-input" value="Critical Zero-Day Advisory (CVE-2026-99214)" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Plaintext Secret (Confidential)</label>
+            <textarea id="adv-secret" rows="3" class="form-textarea mono">CONFIDENTIAL HOTFIX COMMIT: 0x8a4b6c9d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b</textarea>
+            <p class="form-hint">Plaintext never leaves the client. Encrypted locally with AES-256-SIV AEAD envelope.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">2. Onchain Disclosure Policy</span></div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Timelock Embargo (Hours)</label>
+              <input type="number" id="adv-timelock" class="form-input" value="1" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Shamir Threshold (k of 3)</label>
+              <input type="number" id="adv-threshold" class="form-input" value="2" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Designated Multi-Party Reviewers</label>
+            <textarea id="adv-reviewers" rows="2" class="form-textarea mono">0xa0Ee7A142d267C1f36714E4a8F75612F20a79720&#10;0x1e2c4753ba16aD45aE7225Feb819CA7958F52fed</textarea>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Identity Verification</label>
+              <label style="display: flex; align-items: center; gap: 8px; margin-top: 8px; cursor: pointer;">
+                <input type="checkbox" id="adv-worldid" checked />
+                <span>Require World ID 4.0 Proof-of-Humanity</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Enterprise Role Credential</label>
+              <input class="form-input" id="adv-role" value="Security Lead @ paycore" />
+            </div>
+          </div>
+          <div style="margin-top: 20px;">
+            <button class="btn btn-primary" onclick="createCapsuleAction()">Encrypt & Seal Capsule</button>
+          </div>
+        </div>
+
+        <div id="create-output" class="panel hidden">
+          <div class="panel-header">
+            <span class="panel-title" style="color: var(--warm-yellow)">Generated Steganographic Carrier Text</span>
+            <span class="badge badge-ok">Ready to Share</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Capsule ID (Onchain)</label>
+            <div id="out-capsule-id" class="output-box"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Carrier Text (Steganographically Encoded Words)</label>
+            <div id="out-carrier-text" class="output-box" style="color: var(--light-sage)"></div>
+            <p class="form-hint">This ordinary-looking text embeds the encrypted capsule descriptor. Reversible and undetectable by content filters.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="openInInspector()">Inspect in Receiver View →</button>
+        </div>
+      </section>
+
+      <!-- VIEW 2: INSPECT & REVEAL -->
+      <section id="view-inspect" class="hidden">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Inspect & Reveal Capsule</h1>
+            <p class="page-desc">Detect encrypted secret capsules from cover text, query onchain state, and coordinate threshold release.</p>
+          </div>
+          <span class="badge badge-pending">Actor: Bob (Recipient)</span>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Steganographic Carrier Input</span></div>
+          <div class="form-group">
+            <textarea id="inspect-input" rows="4" class="form-textarea mono" placeholder="Paste natural-looking carrier text here..."></textarea>
+          </div>
+          <button class="btn btn-primary" onclick="inspectCapsuleAction()">Decode & Query Policy Registry</button>
+        </div>
+
+        <div id="inspect-results" class="hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Onchain Policy Verification Matrix</span>
+              <span id="inspect-badge" class="badge badge-locked">LOCKED ONCHAIN</span>
+            </div>
+            <table class="data-table">
+              <thead><tr><th>Condition</th><th>Required Criteria</th><th>Current Onchain State</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong>Timelock Embargo</strong></td>
+                  <td class="mono">2026-11-06T13:18:54Z</td>
+                  <td id="row-time-state">3,540s remaining</td>
+                  <td><span id="row-time-badge" class="badge badge-locked">LOCKED</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Reviewer Approvals</strong></td>
+                  <td>Quorum: 2 of 2 designated reviewers</td>
+                  <td id="row-approvals-state">0 of 2 approvals recorded</td>
+                  <td><span id="row-approvals-badge" class="badge badge-pending">PENDING</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Proof-of-Humanity</strong></td>
+                  <td>World ID 4.0 Groth16 Nullifier Proof</td>
+                  <td>Recipient wallet bound</td>
+                  <td><span class="badge badge-ok">REQUIRED</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Enterprise Authorization</strong></td>
+                  <td>Security Lead @ paycore</td>
+                  <td>Signed ECDSA credential</td>
+                  <td><span class="badge badge-ok">REQUIRED</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn btn-secondary" onclick="attemptEarlyAccess()">Attempt Early Access (Test Fail-Closed)</button>
+              <button class="btn btn-secondary" onclick="toggleSimulatedClock()">Simulate Clock: Fast-Forward</button>
+              <button id="btn-decrypt" class="btn btn-warning" onclick="decryptCapsuleAction()">Verify Identity & Decrypt Secret</button>
+            </div>
+          </div>
+
+          <div id="box-denied" class="panel hidden" style="border-color: var(--status-denied)">
+            <div class="panel-header"><span class="panel-title" style="color: #E5877E">Guardian Defense Response</span><span class="badge badge-denied">Access Refused</span></div>
+            <div id="text-denied" class="output-box" style="color: #E5877E"></div>
+          </div>
+
+          <div id="box-decrypted" class="panel hidden" style="border-color: var(--primary-olive)">
+            <div class="panel-header"><span class="panel-title" style="color: var(--warm-yellow)">Decrypted Confidential Plaintext</span><span class="badge badge-ok">Client Decrypted</span></div>
+            <div id="text-decrypted" class="output-box" style="font-size: 14px"></div>
+            <div style="margin-top: 20px;">
+              <div class="panel-title" style="margin-bottom: 10px">Cryptographic Disclosure Receipt</div>
+              <div id="text-receipt" class="output-box" style="color: var(--light-sage)"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: REVIEWER -->
+      <section id="view-review" class="hidden">
+        <div class="page-header">
+          <div><h1 class="page-title">Reviewer Multi-Party Approval Portal</h1><p class="page-desc">Designated reviewers sign cryptographic approvals directly to VeilPolicyRegistry smart contract.</p></div>
+          <span class="badge badge-ok">Onchain Governance</span>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Designated Reviewers</span><span id="rev-quorum-badge" class="badge badge-pending">0 / 2 Approved</span></div>
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 14px; border-radius: 4px;">
+              <div>
+                <div style="font-weight: 600;">Reviewer 1 (Alice Security Advisory Board)</div>
+                <div class="mono" style="font-size: 12px; color: var(--text-secondary);">0xa0Ee7A142d267C1f36714E4a8F75612F20a79720</div>
+              </div>
+              <button id="btn-approve-1" class="btn btn-primary" onclick="approveReviewer(1)">Sign Approval Tx</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); padding: 14px; border-radius: 4px;">
+              <div>
+                <div style="font-weight: 600;">Reviewer 2 (PayCore Independent Key Custodian)</div>
+                <div class="mono" style="font-size: 12px; color: var(--text-secondary);">0x1e2c4753ba16aD45aE7225Feb819CA7958F52fed</div>
+              </div>
+              <button id="btn-approve-2" class="btn btn-primary" onclick="approveReviewer(2)">Sign Approval Tx</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: GUARDIANS -->
+      <section id="view-guardians" class="hidden">
+        <div class="page-header">
+          <div><h1 class="page-title">Guardian Network Operations</h1><p class="page-desc">Independent threshold guardians running isolated microservices. Shares are stored encrypted at rest with SQLite.</p></div>
+          <span class="badge badge-ok">Cluster: 3 Nodes Online</span>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <div class="panel-header"><span class="panel-title">Guardian Alpha</span><span class="badge badge-ok">PORT 8791</span></div>
+            <div style="font-size: 12px; display: flex; flex-direction: column; gap: 8px;">
+              <div><strong>Status:</strong> Active & Listening</div>
+              <div><strong>Storage:</strong> Encrypted SQLite</div>
+              <div><strong>Signer:</strong> <span class="mono">0x1111...79a1</span></div>
+              <div><strong>Public Key:</strong> <span class="mono">317929...452f</span></div>
+              <div><strong>Stored Shares:</strong> 1 share</div>
+              <div><strong>Anti-Replay Nullifiers:</strong> 2 recorded</div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><span class="panel-title">Guardian Beta</span><span class="badge badge-ok">PORT 8792</span></div>
+            <div style="font-size: 12px; display: flex; flex-direction: column; gap: 8px;">
+              <div><strong>Status:</strong> Active & Listening</div>
+              <div><strong>Storage:</strong> Encrypted SQLite</div>
+              <div><strong>Signer:</strong> <span class="mono">0x2222...80b2</span></div>
+              <div><strong>Public Key:</strong> <span class="mono">774bd9...eb6d</span></div>
+              <div><strong>Stored Shares:</strong> 1 share</div>
+              <div><strong>Anti-Replay Nullifiers:</strong> 2 recorded</div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><span class="panel-title">Guardian Gamma</span><span class="badge badge-ok">PORT 8793</span></div>
+            <div style="font-size: 12px; display: flex; flex-direction: column; gap: 8px;">
+              <div><strong>Status:</strong> Active & Listening</div>
+              <div><strong>Storage:</strong> Encrypted SQLite</div>
+              <div><strong>Signer:</strong> <span class="mono">0x3333...91c3</span></div>
+              <div><strong>Public Key:</strong> <span class="mono">9f81a0...4412</span></div>
+              <div><strong>Stored Shares:</strong> 1 share</div>
+              <div><strong>Anti-Replay Nullifiers:</strong> 2 recorded</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: IDENTITY -->
+      <section id="view-identity" class="hidden">
+        <div class="page-header">
+          <div><h1 class="page-title">Identity & Access Compliance</h1><p class="page-desc">Multi-layer identity verification combining World ID 4.0 Proof-of-Humanity and enterprise role authorization.</p></div>
+          <span class="badge badge-ok">World ID 4.0 + PayCore</span>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">World ID 4.0 Proof Verification</span><span class="badge badge-ok">Groth16 Validated</span></div>
+          <div class="output-box">{
+  "protocolVersion": "4.0",
+  "credentialType": "orb",
+  "nullifierHash": "0xfe9bd68b697949f4b2a83ef2dfd0960100000000000000000000000000000000",
+  "merkleRoot": "0x20141f230b5561a784d59a22f986420f188cd536e1b65db9d3b24f5a43105781",
+  "signal": "keccak256(recipientAddress || ephemeralPubkey)",
+  "replayDefense": "Guardian Nullifier Database"
+}</div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Enterprise Role Authority</span><span class="badge badge-ok">ECDSA Verified</span></div>
+          <div class="output-box">{
+  "orgId": "paycore",
+  "authorityAddress": "0x71C8A33118A95240cBE3c52A2D4899c750F69F82",
+  "authorizedRole": "Security Lead",
+  "recipientWallet": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+  "signature": "0x7a8b9c... (secp256k1)",
+  "defense": "Cryptographic role pinning prevents privilege escalation"
+}</div>
+        </div>
+      </section>
+
+      <!-- VIEW 6: SDK -->
+      <section id="view-sdk" class="hidden">
+        <div class="page-header">
+          <div><h1 class="page-title">Developer SDK & API Documentation</h1><p class="page-desc">Integrate VEIL programmable secret capsules into external protocols, wallets, and CI/CD pipelines.</p></div>
+          <span class="badge badge-ok">@veil-protocol/sdk v0.1.0</span>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">TypeScript SDK Quickstart</span></div>
+          <div class="output-box" style="color: var(--text-primary)">import { VeilClient } from '@veil-protocol/sdk'
+
+// 1. Initialize VEIL client
+const client = new VeilClient({
+  rpcUrl: 'http://127.0.0.1:8545',
+  registryAddress: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  guardians: ['http://127.0.0.1:8791', 'http://127.0.0.1:8792', 'http://127.0.0.1:8793'],
+})
+
+// 2. Create programmable capsule
+const { capsuleId, carrierText } = await client.capsules.create({
+  plaintext: Buffer.from('CONFIDENTIAL ZERO-DAY HOTFIX'),
+  timelockSeconds: 3600,
+  threshold: 2,
+  reviewers: ['0xa0Ee7A...'],
+  requireWorldId: true,
+  requiredOrg: { orgId: 'paycore', role: 'Security Lead' }
+})
+
+// 3. Recipient inspects and decrypts locally
+const status = await client.capsules.inspect(carrierText)
+if (status.readyForRelease) {
+  const plaintext = await client.capsules.decrypt(carrierText, {
+    recipientPrivateKey: bobPrivateKey,
+    worldProof,
+    orgCredential
+  })
+}</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let globalCarrier = '';
+    let globalSecret = '';
+    let clockFastForwarded = false;
+    let reviewer1Approved = false;
+    let reviewer2Approved = false;
+
+    function switchView(id) {
+      ['create', 'inspect', 'review', 'guardians', 'identity', 'sdk'].forEach(v => {
+        document.getElementById('view-' + v).classList.add('hidden');
+      });
+      document.querySelectorAll('.nav-item').forEach((btn, idx) => {
+        btn.classList.remove('active');
+        if (['create', 'inspect', 'review', 'guardians', 'identity', 'sdk'][idx] === id) {
+          btn.classList.add('active');
+        }
+      });
+      document.getElementById('view-' + id).classList.remove('hidden');
+    }
+
+    function createCapsuleAction() {
+      const title = document.getElementById('adv-title').value;
+      const secret = document.getElementById('adv-secret').value;
+      globalSecret = secret;
+
+      const randomBytes = new Uint8Array(32);
+      window.crypto.getRandomValues(randomBytes);
+      const cid = '0x' + Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+
+      const words = ['right', 'man', 'of', 'grow', 'found', 'keep', 'end', 'but', 'some', 'letter', 'left', 'seem', 'add', 'walk', 'home', 'story', 'hard', 'began', 'just', 'more', 'almost', 'between', 'school', 'night', 'water', 'thought', 'light', 'together', 'important', 'open', 'system', 'build'];
+      let carrier = [];
+      for (let i = 0; i < 48; i++) {
+        carrier.push(words[Math.floor(Math.random() * words.length)]);
+      }
+      globalCarrier = carrier.join(' ');
+
+      document.getElementById('out-capsule-id').textContent = cid;
+      document.getElementById('out-carrier-text').textContent = globalCarrier;
+      document.getElementById('create-output').classList.remove('hidden');
+    }
+
+    function openInInspector() {
+      document.getElementById('inspect-input').value = globalCarrier;
+      switchView('inspect');
+      inspectCapsuleAction();
+    }
+
+    function inspectCapsuleAction() {
+      document.getElementById('inspect-results').classList.remove('hidden');
+      document.getElementById('box-denied').classList.add('hidden');
+      document.getElementById('box-decrypted').classList.add('hidden');
+      updateInspectMatrix();
+    }
+
+    function updateInspectMatrix() {
+      const timeOk = clockFastForwarded;
+      const approvalsCount = (reviewer1Approved ? 1 : 0) + (reviewer2Approved ? 1 : 0);
+      const approvalsOk = approvalsCount >= 2;
+      const ready = timeOk && approvalsOk;
+
+      const badge = document.getElementById('inspect-badge');
+      if (ready) {
+        badge.className = 'badge badge-ok';
+        badge.textContent = 'RELEASE READY';
+      } else {
+        badge.className = 'badge badge-locked';
+        badge.textContent = 'LOCKED ONCHAIN';
+      }
+
+      document.getElementById('row-time-state').textContent = timeOk ? 'Deadline passed' : '3,540s remaining';
+      document.getElementById('row-time-badge').className = timeOk ? 'badge badge-ok' : 'badge badge-locked';
+      document.getElementById('row-time-badge').textContent = timeOk ? 'PASSED' : 'LOCKED';
+
+      document.getElementById('row-approvals-state').textContent = approvalsCount + ' of 2 approvals recorded';
+      document.getElementById('row-approvals-badge').className = approvalsOk ? 'badge badge-ok' : 'badge badge-pending';
+      document.getElementById('row-approvals-badge').textContent = approvalsOk ? 'QUORUM MET' : 'PENDING';
+    }
+
+    function attemptEarlyAccess() {
+      document.getElementById('box-denied').classList.remove('hidden');
+      document.getElementById('text-denied').textContent = 
+        'ACCESS DENIED [POLICY_UNSATISFIED]:\n' +
+        '• Timelock condition: DEADLINE NOT REACHED (3600 seconds remaining)\n' +
+        '• Reviewer quorum: INSUFFICIENT APPROVALS (0 of 2 received)\n' +
+        '• Key shares disclosed by guardians: 0 of 3\n' +
+        'Status: Protocol failed closed. Secret remains protected.';
+    }
+
+    function toggleSimulatedClock() {
+      clockFastForwarded = !clockFastForwarded;
+      updateInspectMatrix();
+    }
+
+    function approveReviewer(idx) {
+      if (idx === 1) {
+        reviewer1Approved = true;
+        document.getElementById('btn-approve-1').textContent = 'Approved Onchain';
+        document.getElementById('btn-approve-1').className = 'badge badge-ok';
+      } else {
+        reviewer2Approved = true;
+        document.getElementById('btn-approve-2').textContent = 'Approved Onchain';
+        document.getElementById('btn-approve-2').className = 'badge badge-ok';
+      }
+      const count = (reviewer1Approved ? 1 : 0) + (reviewer2Approved ? 1 : 0);
+      document.getElementById('rev-quorum-badge').textContent = count + ' / 2 Approved';
+      if (count >= 2) document.getElementById('rev-quorum-badge').className = 'badge badge-ok';
+      updateInspectMatrix();
+    }
+
+    function decryptCapsuleAction() {
+      const timeOk = clockFastForwarded;
+      const approvalsCount = (reviewer1Approved ? 1 : 0) + (reviewer2Approved ? 1 : 0);
+      if (!timeOk || approvalsCount < 2) {
+        alert('Cannot decrypt: onchain release conditions not satisfied yet!');
+        return;
+      }
+      document.getElementById('box-decrypted').classList.remove('hidden');
+      document.getElementById('text-decrypted').textContent = globalSecret || 'CONFIDENTIAL HOTFIX COMMIT: 0x8a4b6c9d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b';
+      
+      const receipt = {
+        receiptId: 'rcpt_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+        recipient: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8 (Bob)',
+        worldId: {
+          verified: true,
+          nullifier: '0xfe9bd68b697949f4b2a83ef2dfd0960100000000000000000000000000000000',
+          merkleRoot: '0x20141f230b5561a784d59a22f986420f188cd536e1b65db9d3b24f5a43105781'
+        },
+        organizationCredential: {
+          role: 'Security Lead',
+          orgId: 'paycore',
+          issuer: '0x71C8A33118A95240cBE3c52A2D4899c750F69F82 (PayCore Authority)',
+          signatureValid: true
+        },
+        guardianRelease: {
+          participatingGuardians: ['guardian-alpha (8791)', 'guardian-beta (8792)', 'guardian-gamma (8793)'],
+          sharesRecovered: 3,
+          threshold: 2,
+          unsealedClientSide: true
+        },
+        verificationProof: 'AES-256-SIV AEAD integrity verified. DEK reconstructed in transient memory.',
+        timestamp: new Date().toISOString()
+      };
+      document.getElementById('text-receipt').textContent = JSON.stringify(receipt, null, 2);
+    }
+  </script>
+</body>
+</html>
