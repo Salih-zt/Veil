@@ -22,7 +22,9 @@
     "deploy:contracts": "cd contracts && .\\forge.exe script script/DeployVeilPolicyRegistry.s.sol:DeployVeilPolicyRegistry --rpc-url http://127.0.0.1:8545 --broadcast",
     "guardians": "node scripts/start-guardians.mjs",
     "api": "node --import ./test/lib/resolve-ts.mjs scripts/start-api.mjs",
+    "start:api": "node --import ./test/lib/resolve-ts.mjs scripts/start-api.mjs",
     "serve": "node scripts/serve-web.mjs",
+    "start:web": "node scripts/serve-web.mjs",
     "encrypt": "node scripts/encrypt-message.mjs",
     "demo": "node --import ./test/lib/resolve-ts.mjs scripts/demo-e2e.mjs"
   },
