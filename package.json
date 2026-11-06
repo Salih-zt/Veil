@@ -4,17 +4,12 @@
   "private": true,
   "description": "VEIL — Programmable Secret Capsules: Conditional-disclosure protocol combining reversible steganography, threshold cryptography, and onchain smart contracts for ETHGlobal Mumbai 2026",
   "type": "module",
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "examples/*"
-  ],
   "scripts": {
     "launch": "node scripts/launch.mjs",
     "start:all": "node scripts/launch.mjs",
-    "dev": "node node_modules/next/dist/bin/next dev",
-    "build": "node node_modules/next/dist/bin/next build",
-    "start": "node node_modules/next/dist/bin/next start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "test": "node scripts/test-all.mjs",
     "test:unit": "node --import ./test/lib/resolve-ts.mjs --test test/unit/*.test.mjs",
     "test:contracts": "cd contracts && forge.exe test",
