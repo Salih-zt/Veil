@@ -15,9 +15,9 @@ const client = new VeilClient({
   registryAddress: REGISTRY_ADDRESS,
   storage: new MemoryStorageAdapter(),
   guardians: [
-    new HttpGuardianAdapter({ url: 'http://127.0.0.1:8791', guardianId: 'guardian-alpha' }),
-    new HttpGuardianAdapter({ url: 'http://127.0.0.1:8792', guardianId: 'guardian-beta' }),
-    new HttpGuardianAdapter({ url: 'http://127.0.0.1:8793', guardianId: 'guardian-gamma' }),
+    new HttpGuardianAdapter('http://127.0.0.1:8791', 'guardian-alpha'),
+    new HttpGuardianAdapter('http://127.0.0.1:8792', 'guardian-beta'),
+    new HttpGuardianAdapter('http://127.0.0.1:8793', 'guardian-gamma'),
   ],
 })
 

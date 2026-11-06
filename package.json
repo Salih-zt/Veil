@@ -20,7 +20,7 @@
     "anvil": "contracts\\anvil.exe --port 8545 --chain-id 31337",
     "deploy:contracts": "cd contracts && .\\forge.exe script script/DeployVeilPolicyRegistry.s.sol:DeployVeilPolicyRegistry --rpc-url http://127.0.0.1:8545 --broadcast",
     "guardians": "node scripts/start-guardians.mjs",
-    "api": "node scripts/start-api.mjs",
+    "api": "node --import ./test/lib/resolve-ts.mjs scripts/start-api.mjs",
     "serve": "node scripts/serve-web.mjs",
     "demo": "node --import ./test/lib/resolve-ts.mjs scripts/demo-e2e.mjs"
   },

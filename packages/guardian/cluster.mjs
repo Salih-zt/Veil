@@ -28,19 +28,29 @@ export const GUARDIAN_CONFIGS = [
   },
 ]
 
-export async function startCluster(overrides = {}) {
+export async function startGuardianCluster(overrides = {}) {
+  const configs = overrides.nodes || GUARDIAN_CONFIGS
   const instances = []
-  for (const cfg of GUARDIAN_CONFIGS) {
+  const nodes = []
+  for (const cfg of configs) {
+    const dbPath = cfg.dbPath || join(DATA_DIR, `${cfg.guardianId || 'guardian'}.sqlite`)
     const runner = startGuardianServer({
       ...cfg,
       ...overrides,
-      dbPath: overrides.inMemory ? ':memory:' : cfg.dbPath,
+      dbPath: overrides.inMemory ? ':memory:' : dbPath,
     })
     await runner.listen()
     instances.push(runner)
+    nodes.push({
+      guardianId: runner.guardian.guardianId,
+      port: cfg.port,
+      pubkey: runner.guardian.pubKey,
+      instance: runner,
+    })
   }
   return {
     instances,
+    nodes,
     close: async () => {
       for (const inst of instances) {
         await inst.close()
@@ -48,6 +58,8 @@ export async function startCluster(overrides = {}) {
     },
   }
 }
+
+export const startCluster = startGuardianCluster
 
 // Direct CLI start
 if (process.argv[1]?.endsWith('cluster.mjs')) {

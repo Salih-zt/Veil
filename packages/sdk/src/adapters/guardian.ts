@@ -30,9 +30,11 @@ export class HttpGuardianAdapter implements VeilGuardianAdapter {
   private readonly baseUrl: string
   private cachedPub: string | null = null
 
-  constructor(url: string, guardianId?: string) {
-    this.baseUrl = url.replace(/\/$/, '')
-    this.guardianId = guardianId || `guardian-http-${this.baseUrl.split(':').pop()}`
+  constructor(urlOrConfig: string | { url: string; guardianId?: string }, guardianId?: string) {
+    const rawUrl = typeof urlOrConfig === 'string' ? urlOrConfig : urlOrConfig?.url || ''
+    const rawId = typeof urlOrConfig === 'string' ? guardianId : (urlOrConfig?.guardianId || guardianId)
+    this.baseUrl = rawUrl.replace(/\/$/, '')
+    this.guardianId = rawId || `guardian-http-${this.baseUrl.split(':').pop()}`
   }
 
   async getPublicKey(): Promise<string> {
