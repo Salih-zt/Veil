@@ -94,19 +94,21 @@ Launch the zero-dependency interactive web dashboard on `http://localhost:3000`:
 
 ```bash
 # 1. Start Local Anvil Testnet (Terminal 1)
-anvil --port 8545 --chain-id 31337
+npm run anvil
+# (Runs bundled .\contracts\anvil.exe on port 8545)
 
 # 2. Deploy Policy Registry Contract (Terminal 2)
-forge script contracts/script/DeployVeilPolicyRegistry.s.sol:DeployVeilPolicyRegistry --rpc-url http://127.0.0.1:8545 --broadcast
+npm run deploy:contracts
+# (Runs bundled .\contracts\forge.exe deployment script)
 
 # 3. Start Guardian Cluster (Terminal 3)
-node scripts/start-guardians.mjs
+npm run guardians
 
 # 4. Start REST API (Terminal 4)
-node scripts/start-api.mjs
+npm run api
 
 # 5. Start Web Dashboard (Terminal 5)
-node scripts/serve-web.mjs
+npm run serve
 ```
 
 Open **`http://localhost:3000`** in your browser to begin the walkthrough.

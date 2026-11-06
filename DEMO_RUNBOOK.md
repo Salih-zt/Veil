@@ -13,15 +13,16 @@ Before beginning the judge presentation, ensure the environment is initialized.
 
 ### Terminal 1: Local EVM Anvil Testnet
 ```bash
-anvil --port 8545 --chain-id 31337
+cd "D:\ethglobal\veil protocol"
+npm run anvil
+# Or directly: .\contracts\anvil.exe --port 8545 --chain-id 31337
 ```
 
 ### Terminal 2: Deploy Policy Registry Contract
 ```bash
 cd "D:\ethglobal\veil protocol"
-forge script contracts/script/DeployVeilPolicyRegistry.s.sol:DeployVeilPolicyRegistry \
-  --rpc-url http://127.0.0.1:8545 \
-  --broadcast
+npm run deploy:contracts
+# Or directly: .\contracts\forge.exe script contracts/script/DeployVeilPolicyRegistry.s.sol:DeployVeilPolicyRegistry --rpc-url http://127.0.0.1:8545 --broadcast
 ```
 
 ### Terminal 3: Start 3-Node Independent Guardian Cluster
