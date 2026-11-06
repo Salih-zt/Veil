@@ -22,7 +22,7 @@ npm run anvil
 ```bash
 cd "D:\ethglobal\veil protocol"
 npm run deploy:contracts
-# Or directly: .\contracts\forge.exe script contracts/script/DeployVeilPolicyRegistry.s.sol:DeployVeilPolicyRegistry --rpc-url http://127.0.0.1:8545 --broadcast
+# Or directly: cd contracts && .\forge.exe script script/DeployVeilPolicyRegistry.s.sol:DeployVeilPolicyRegistry --rpc-url http://127.0.0.1:8545 --broadcast
 ```
 
 ### Terminal 3: Start 3-Node Independent Guardian Cluster
