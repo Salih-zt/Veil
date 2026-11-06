@@ -203,7 +203,7 @@ export function createGuardianCore({
      * Deposit an encrypted share for a capsule.
      */
     deposit({ capsuleId, shareIndex, sealedBox, policyHash, ciphertextHash, requirements = null }) {
-      if (!capsuleId || !shareIndex || !sealedBox || !policyHash || !ciphertextHash) {
+      if (!capsuleId || shareIndex === undefined || shareIndex === null || !sealedBox || !policyHash || !ciphertextHash) {
         throw new Error('deposit: missing required parameters')
       }
 

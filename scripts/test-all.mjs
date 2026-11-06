@@ -69,4 +69,12 @@ runStep(
   ROOT
 )
 
+// 5. Complete 34-Step Product Acceptance Scenario
+runStep(
+  '34-Step Product Acceptance Scenario (Multi-User, Rooms, Dynamic M-of-N, World ID, ENS)',
+  'node',
+  ['--import', './test/lib/resolve-ts.mjs', '--test', 'test/integration/product-acceptance.test.mjs'],
+  ROOT
+)
+
 banner('ALL TEST TIERS PASSED WITH ZERO FAILURES (100% PROTOCOL INTEGRITY)')

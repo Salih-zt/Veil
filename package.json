@@ -17,6 +17,7 @@
     "test:demo": "node --import ./test/lib/resolve-ts.mjs scripts/demo-e2e.mjs",
     "test:scenario": "node --import ./test/lib/resolve-ts.mjs examples/vulnerability-disclosure/run-scenario.ts",
     "test:judge-demo": "node --import ./test/lib/resolve-ts.mjs --test test/integration/demo-workflow.test.mjs",
+    "test:product": "node --import ./test/lib/resolve-ts.mjs --test test/integration/product-acceptance.test.mjs",
     "anvil": "contracts\\anvil.exe --port 8545 --chain-id 31337",
     "deploy:contracts": "cd contracts && .\\forge.exe script script/DeployVeilPolicyRegistry.s.sol:DeployVeilPolicyRegistry --rpc-url http://127.0.0.1:8545 --broadcast",
     "guardians": "node scripts/start-guardians.mjs",

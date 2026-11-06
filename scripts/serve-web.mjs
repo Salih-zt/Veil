@@ -12,7 +12,8 @@ const DASHBOARD_HTML = resolve(ROOT, 'apps/web/dashboard.html')
 const PORT = 3000
 
 const server = createServer((req, res) => {
-  if (req.url === '/' || req.url === '/index.html' || req.url === '/dashboard.html' || req.url === '/demo') {
+  const urlPath = req.url.split('?')[0]
+  if (!urlPath.includes('.') || urlPath.endsWith('.html') || urlPath.startsWith('/invite/') || urlPath.startsWith('/rooms/')) {
     if (existsSync(DASHBOARD_HTML)) {
       const html = readFileSync(DASHBOARD_HTML, 'utf8')
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })

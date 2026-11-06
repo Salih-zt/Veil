@@ -78,40 +78,64 @@ veil protocol/
 └── PHASE_8_KNOWN_LIMITATIONS.md # Documented production scope & roadmap
 ```
 
+## 🚀 VEIL v2.0 — Wallet-Based Collaborative Conditional Encryption
+
+VEIL has been transformed from an experimental research demo into an **end-to-end collaborative encrypted messaging platform**. Predefined sample personas have been eliminated from production flows. Every user connects their own Ethereum wallet (MetaMask / EIP-1193), verifies their humanity with World ID 4.0, authenticates their ENS domain name, creates private collaborative rooms, and shares encrypted capsules governed by customizable $M$-of-$N$ onchain approval rules.
+
+### 📚 Complete Product Documentation
+- **[Product Transformation Audit (`PRODUCT_TRANSFORMATION_AUDIT.md`)](PRODUCT_TRANSFORMATION_AUDIT.md)**: Repository audit, migrations, and architecture.
+- **[Product Implementation Report (`PRODUCT_IMPLEMENTATION_REPORT.md`)](PRODUCT_IMPLEMENTATION_REPORT.md)**: Full-stack implementation summary.
+- **[Identity Integration Specification (`IDENTITY_INTEGRATION.md`)](IDENTITY_INTEGRATION.md)**: Multi-layer identity model.
+- **[World ID 4.0 Specification (`WORLD_ID_INTEGRATION.md`)](WORLD_ID_INTEGRATION.md)**: Proof-of-humanity & Semaphore Groth16 verification.
+- **[ENS Integration Guide (`ENS_INTEGRATION.md`)](ENS_INTEGRATION.md)**: Bidirectional forward and reverse ENS resolution.
+- **[Private Rooms & Invitations (`ROOMS_AND_INVITATIONS.md`)](ROOMS_AND_INVITATIONS.md)**: Room creation and single-use hashed invitations.
+- **[Flexible M-of-N Policy (`APPROVAL_POLICY.md`)](APPROVAL_POLICY.md)**: Dynamic quorum governance and achievability math.
+- **[Capsule Workflow (`CAPSULE_WORKFLOW.md`)](CAPSULE_WORKFLOW.md)**: Client-side encryption & steganographic encoding.
+- **[Decryption Flow (`DECRYPTION_FLOW.md`)](DECRYPTION_FLOW.md)**: Key reconstruction sequence & disclosure receipts.
+- **[Security Model (`SECURITY_MODEL.md`)](SECURITY_MODEL.md)**: Threat analysis and cryptographic invariants.
+- **[Complete Test Report (`TEST_REPORT.md`)](TEST_REPORT.md)**: 100% test pass verification report.
+- **[Product & Demo Runbook (`DEMO_RUNBOOK.md`)](DEMO_RUNBOOK.md)**: Step-by-step human operator and judge presentation guide.
+
 ---
 
-## 🏆 ETHGlobal Judge Demo: Northstar Payments (`CVE-2026-8812`)
+## 🏆 Running the Complete Application Locally
 
-A complete, human-operated demonstration experience designed specifically for ETHGlobal judges and evaluators. Real participants sign in with their Ethereum wallets, conceal zero-day vulnerability disclosures inside natural English steganography, enforce multi-party onchain governance, and demonstrate cryptographic fail-closed states before authorized client-side decryption.
-
-### 📚 Demo Documentation
-- **[Judge Demo Runbook (`DEMO_RUNBOOK.md`)](DEMO_RUNBOOK.md)**: Screen-by-screen walkthrough, presentation timing, and operator guidance.
-- **[Demo Accounts & Key Directory (`DEMO_ACCOUNTS.md`)](DEMO_ACCOUNTS.md)**: Details of Alice, Bob, Charlie, David, and Eve (addresses, roles, MetaMask import guides).
-- **[Demo Scenario Specification (`DEMO_SCENARIO.md`)](DEMO_SCENARIO.md)**: Deep dive into the Northstar Payments double-credit race condition (`CVE-2026-8812`) and release policy.
-
-### 🚀 Running the Human-Operated Demo
-Launch the zero-dependency interactive web dashboard on `http://localhost:3000`:
+Open 5 terminal windows in `D:\ethglobal\veil protocol`:
 
 ```bash
-# 1. Start Local Anvil Testnet (Terminal 1)
+# 1. Start Local EVM Anvil Testnet (Terminal 1)
 npm run anvil
-# (Runs bundled .\contracts\anvil.exe on port 8545)
 
 # 2. Deploy Policy Registry Contract (Terminal 2)
 npm run deploy:contracts
-# (Runs bundled .\contracts\forge.exe deployment script)
 
-# 3. Start Guardian Cluster (Terminal 3)
+# 3. Start 3-Node Guardian Cluster (Terminal 3)
 npm run guardians
 
-# 4. Start REST API (Terminal 4)
+# 4. Start REST API Server with SQLite DB (Terminal 4)
 npm run api
 
-# 5. Start Web Dashboard (Terminal 5)
+# 5. Start Web Application (Terminal 5)
 npm run serve
 ```
 
-Open **`http://localhost:3000`** in your browser to begin the walkthrough.
+Once running, navigate to **`http://localhost:3000`** in your browser.
+
+---
+
+## 🧪 Comprehensive Automated Verification
+
+Execute the complete 34-step collaborative product acceptance scenario:
+
+```bash
+npm run test:product
+```
+*Result: `✔ 34-STEP PRODUCT ACCEPTANCE SCENARIO PASSED WITH 100% SUCCESS!`*
+
+Or run all test tiers simultaneously:
+```bash
+npm run test
+```
 
 ---
 
