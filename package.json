@@ -10,6 +10,8 @@
     "examples/*"
   ],
   "scripts": {
+    "launch": "node scripts/launch.mjs",
+    "start:all": "node scripts/launch.mjs",
     "dev": "node node_modules/next/dist/bin/next dev",
     "build": "node node_modules/next/dist/bin/next build",
     "start": "node node_modules/next/dist/bin/next start",
