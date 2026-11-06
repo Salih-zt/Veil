@@ -22,6 +22,7 @@
     "guardians": "node scripts/start-guardians.mjs",
     "api": "node --import ./test/lib/resolve-ts.mjs scripts/start-api.mjs",
     "serve": "node scripts/serve-web.mjs",
+    "encrypt": "node scripts/encrypt-message.mjs",
     "demo": "node --import ./test/lib/resolve-ts.mjs scripts/demo-e2e.mjs"
   },
   "dependencies": {
