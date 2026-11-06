@@ -1,0 +1,37 @@
+{
+  "name": "@veil-protocol/crypto",
+  "version": "0.1.0",
+  "description": "Core cryptographic and protocol primitives for VEIL: AES-256-SIV AEAD envelope, Shamir Secret Sharing over GF(256), X25519 sealed boxes, and reversible steganography codec",
+  "type": "module",
+  "main": "capsule.mjs",
+  "exports": {
+    ".": "./capsule.mjs",
+    "./capsule": "./capsule.mjs",
+    "./sss": "./sss.mjs",
+    "./gatebox": "./gatebox.mjs",
+    "./keys": "./keys.mjs",
+    "./policy-registry": "./policy-registry.mjs",
+    "./lifecycle": "./lifecycle.mjs",
+    "./codec": "./codec/wordmap.mjs",
+    "./identity": "./identity/index.mjs",
+    "./identity/world-id": "./identity/world-id.mjs",
+    "./identity/org-auth": "./identity/org-auth.mjs",
+    "./identity/recipient-auth": "./identity/recipient-auth.mjs",
+    "./identity/recipient-flow": "./identity/recipient-flow.mjs",
+    "./storage": "./storage/storage.mjs",
+    "./workflow": "./workflow/index.mjs",
+    "./workflow/creator": "./workflow/creator.mjs",
+    "./workflow/detector": "./workflow/detector.mjs",
+    "./workflow/reviewer": "./workflow/reviewer.mjs",
+    "./workflow/decryptor": "./workflow/decryptor.mjs",
+    "./workflow/receipt": "./workflow/receipt.mjs"
+  },
+  "dependencies": {
+    "@noble/ciphers": "^2.0.0",
+    "@noble/curves": "^2.0.0",
+    "@noble/hashes": "^2.0.0",
+    "@scure/bip39": "^1.6.0",
+    "viem": "^2.21.0"
+  },
+  "license": "MIT"
+}

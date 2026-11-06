@@ -1,0 +1,21 @@
+{
+  "name": "@veil-protocol/guardian",
+  "version": "0.1.0",
+  "description": "Independent guardian service and cluster orchestrator for VEIL threshold key release",
+  "type": "module",
+  "main": "guardian.mjs",
+  "exports": {
+    ".": "./guardian.mjs",
+    "./guardian": "./guardian.mjs",
+    "./server": "./server.mjs",
+    "./cluster": "./cluster.mjs",
+    "./orchestrator": "./orchestrator.mjs"
+  },
+  "dependencies": {
+    "@noble/ciphers": "^2.0.0",
+    "@noble/curves": "^2.0.0",
+    "@noble/hashes": "^2.0.0",
+    "viem": "^2.21.0"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build and compilation outputs
+dist/
+build/
+out/
+cache/
+.turbo/
+*.tsbuildinfo
+
+# Environment and sensitive keys
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.keystore
+id_rsa*
+secrets/
+
+# Databases and Guardian data at rest
+*.sqlite
+*.sqlite3
+*.db
+data/
+guardian-data/
+*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Foundry outputs
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# Executable binaries
+*.exe

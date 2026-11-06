@@ -1,0 +1,42 @@
+{
+  "name": "veil-protocol",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VEIL — Programmable Secret Capsules: Conditional-disclosure protocol combining reversible steganography, threshold cryptography, and onchain smart contracts for ETHGlobal Mumbai 2026",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "test": "node scripts/test-all.mjs",
+    "test:unit": "node --import ./test/lib/resolve-ts.mjs --test test/unit/*.test.mjs",
+    "test:contracts": "cd contracts && forge.exe test",
+    "test:integration": "node --import ./test/lib/resolve-ts.mjs --test test/integration/*.test.mjs",
+    "test:demo": "node --import ./test/lib/resolve-ts.mjs scripts/demo-e2e.mjs",
+    "test:scenario": "node --import ./test/lib/resolve-ts.mjs examples/vulnerability-disclosure/run-scenario.ts",
+    "guardians": "node scripts/start-guardians.mjs",
+    "api": "node scripts/start-api.mjs",
+    "demo": "node --import ./test/lib/resolve-ts.mjs scripts/demo-e2e.mjs"
+  },
+  "dependencies": {
+    "@noble/ciphers": "^2.0.0",
+    "@noble/curves": "^2.0.0",
+    "@noble/hashes": "^2.0.0",
+    "@scure/bip39": "^1.6.0",
+    "viem": "^2.21.0"
+  },
+  "keywords": [
+    "veil",
+    "programmable-capsules",
+    "steganography",
+    "secret-sharing",
+    "threshold-cryptography",
+    "smart-contracts",
+    "world-id",
+    "ethglobal-mumbai"
+  ],
+  "author": "VEIL Protocol Core Team",
+  "license": "MIT"
+}
